@@ -12,6 +12,7 @@ body {
     margin: 0 0 0 0;
 }
 
+/* Start of Navigation Bar CSS */
 .dashboard-container {
     display: flex;
     flex-direction: column;
@@ -55,14 +56,6 @@ body {
     align-items: center;
     height: 100%;
     margin: 0 20px 0 0;
-}
-
-.dashboard-header-right-content {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    margin: 0 20px 0 0;
-    cursor: pointer;
 }
 
 .notification-icon {
@@ -132,6 +125,14 @@ body {
     vertical-align: middle;
 }
 
+.dashboard-header-right-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0 20px 0 0;
+    cursor: pointer;
+}
+
 .notification-dropdown {
     display: none;
     position: absolute;
@@ -161,114 +162,71 @@ body {
     border-bottom: none;
 }
 
-.profile-container {
+/* End of Navigation Bar CSS */
+
+/* Start of Main Content CSS */
+
+.audit-logs-header {
+    font-weight: 900;
+    margin: 0 0 20px 0;
     padding: 20px;
 }
 
-.profile-content {
+.audit-logs-container {
     display: flex;
     flex-direction: column;
-    align-items: center;
-    margin: 20px 0 0 0;
-}
-
-.profile-container img {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.profile-picture {
-    display: flex;
-    width: 90%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid black;
-    background-color: white;
-    margin: 20px 0 20px 0;
-    border-radius: 20px;
+    margin: 20px 20px 20px 20px;
     padding: 20px;
 }
 
-.profile-picture form {
-    width: 100%;
-}
-
-.upload-profile-picture-container {
+.audit-logs-buttons {
     display: flex;
     flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-}
-
-.upload-profile-picture-btn-container {
-    display: flex;
-    flex-direction: column;
-}
-
-.confirm-upload-profile-btn-container {
-    display: flex;
-    align-items: end !important;
-    justify-content: right !important;
-    gap: 10px;
-}
-
-#upload-profile-btn {
-    background-color: #c1c1c1;
-    color: white;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#cancel-upload-profile-btn {
-    display: none;
-    background-color: red;
-    color: white;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.profile-info {
-    display: flex;
-    flex-direction: column;
-    width: 90%;
+    justify-content: space-between;
+    margin: 0 0 20px 0;
     padding: 20px;
-    background-color: white;
-    border-radius: 20px;
-    align-items: left !important;
-    margin: 20px 0 20px 0;
-    border: 1px solid black;
 }
 
-.profile-button-container {
+.audit-logs-buttons-right {
     display: flex;
     flex-direction: row;
     justify-content: right;
-    gap: 15px;
     align-items: center;
+    margin: 0 20px 0 0;
+    gap: 10px;
 }
 
-#edit-profile-btn {
-    background-color: #1E3E62;
+.audit-logs-buttons button {
+    background-color: #0B192C;
     color: white;
-    padding: 10px 30px;
     border: none;
     border-radius: 5px;
+    padding: 10px 20px;
     cursor: pointer;
 }
 
-#save-profile-btn {
-    background-color: #C1C1C1;
-    color: white;
-    padding: 10px 30px;
-    border: none;
+.audit-logs-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 0 0 20px 0;
+}
+
+.audit-logs-table table {
+    border-collapse: collapse;
+    width: 100%;
+    margin: 0 0 20px 0;
     border-radius: 5px;
-    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.2);
+    background-color: #f9f9f9;
+}
+
+.audit-logs-table th,
+.audit-logs-table td {
+    padding: 12px 15px;
+    text-align: left;
+    border-bottom: 1px solid;
+    border-right: 1px solid #ddd;
+    vertical-align: middle;
+    color: #0B192C;
 }

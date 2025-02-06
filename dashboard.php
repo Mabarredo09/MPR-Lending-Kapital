@@ -28,6 +28,12 @@
                     <img src="images/dashboard.png" alt="Dashboard Logo">
                 </div>
                 <div class="dashboard-header-right">
+                    <div class="dashboard-header-right-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M3 13h8V3H3zm0 8h8v-6H3zm10 0h8V11h-8zm0-18v6h8V3z" />
+                        </svg>
+                        <p>Dashboard</p>
+                    </div>
                     <div class="notification">
                         <div class="notification-icon">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">

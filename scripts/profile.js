@@ -6,6 +6,7 @@ let inputs = document.querySelectorAll(".inputs");
 const zooming = new Zooming();
 const notificationIcon = document.querySelector(".notification-icon");
 const notificationDropdown = document.querySelector(".notification-dropdown");
+let dashboardHeader = document.querySelector(".dashboard-header-right-content");
 
 let profilePicturePreview = document.getElementById("profile-picture-preview");
 let profilePictureUpload = document.getElementById("profile-picture-upload");
@@ -26,6 +27,10 @@ profileDropdown.addEventListener("mouseout", function () {
 notificationIcon.addEventListener("click", function () {
   notificationDropdown.style.display =
     notificationDropdown.style.display === "block" ? "none" : "block";
+});
+
+dashboardHeader.addEventListener("click", function () {
+  window.location.href = "dashboard.php";
 });
 // Close the dropdown if the user clicks outside of it
 window.addEventListener("click", function (event) {

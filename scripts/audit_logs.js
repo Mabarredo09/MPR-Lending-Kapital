@@ -2,8 +2,6 @@ let profileDropdown = document.querySelector(".profile-dropdown");
 let arrowDownIcon = document.querySelector(".arrow-down-icon");
 let editProfileButton = document.getElementById("edit-profile-btn");
 let saveProfileButton = document.getElementById("save-profile-btn");
-let inputs = document.querySelectorAll(".inputs");
-const zooming = new Zooming();
 const notificationIcon = document.querySelector(".notification-icon");
 const notificationDropdown = document.querySelector(".notification-dropdown");
 
