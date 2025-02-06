@@ -6,7 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- CSS -->
     <link rel="stylesheet" href="styles/dashboard.css">
-
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -52,7 +51,8 @@
                         <p>Welcome, John Doe</p>
                         <div class="profile-dropdown-content">
                             <a href="#">Profile</a>
-                            <a href="#">Settings</a>
+                            <a href="#">Manage User Access</a>
+                            <a href="#">Audit Logs</a>
                             <a href="#">Logout</a>
                         </div>
                     </div>
