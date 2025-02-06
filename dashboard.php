@@ -47,10 +47,10 @@
 <div class="dashboard-content">
 
     <div class="dashboard-content-button">
-        <div class="search-container">
-            <input type="text" placeholder="Search" class="search-input">
-            <button class="search-btn">Search</button>
-        </div>
+    <div class="search-container">
+    <input type="text" id="searchInput" placeholder="Search" class="search-input">
+    <button class="search-btn" id="searchBtn">Search</button>
+</div>
         <div class="button-container">
             <button class="add-btn" id="add-btn">Add</button>
             <button disabled class="edit-btn" id="edit-btn">Edit</button>

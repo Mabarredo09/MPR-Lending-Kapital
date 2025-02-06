@@ -90,3 +90,42 @@ collateralInput.addEventListener('change', function() {
         reader.readAsDataURL(file);
     }
 });
+document.addEventListener('DOMContentLoaded', function () {
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const table = document.getElementById('dataTable');
+    const rows = table.getElementsByTagName('tr');
+
+    searchBtn.addEventListener('click', function () {
+        const searchText = searchInput.value.toLowerCase();
+
+        for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
+            const row = rows[i];
+            const cells = row.getElementsByTagName('td');
+            let match = false;
+
+            for (let j = 0; j < cells.length; j++) {
+                const cellText = cells[j].textContent.toLowerCase();
+                if (cellText.includes(searchText)) {
+                    match = true;
+                    break;
+                }
+            }
+
+            if (match) {
+                row.style.display = '';
+            } else {
+                row.style.display = 'none';
+            }
+        }
+    });
+
+    // Optional: Clear search and show all rows when the search input is empty
+    searchInput.addEventListener('input', function () {
+        if (searchInput.value === '') {
+            for (let i = 1; i < rows.length; i++) {
+                rows[i].style.display = '';
+            }
+        }
+    });
+});
