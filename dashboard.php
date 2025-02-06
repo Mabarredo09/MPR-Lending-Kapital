@@ -1,3 +1,32 @@
+<?php
+// Start the session to access user data
+session_start();
+
+// Database connection
+$db = new mysqli('localhost', 'root', '', 'wewz');
+
+// Check connection
+if ($db->connect_error) {
+    die("Connection failed: " . $db->connect_error);
+}
+
+// Fetch the profile picture path for the logged-in user
+$user_id = $_SESSION['user_id']; // Make sure this matches the session variable set when the user logs in
+$sql = "SELECT profile_picture FROM users WHERE id = ?";  // Adjusted column name
+$stmt = $db->prepare($sql);
+$stmt->bind_param("i", $user_id);
+$stmt->execute();
+$result = $stmt->get_result();
+$user = $result->fetch_assoc();
+
+// Check if the user has a profile picture
+$profilePicturePath = $user['profile_picture'] ? $user['profile_picture'] : 'images/default_profile.jpg'; // Default image if no profile picture is set
+$profilePicturePath = isset($user['profile_picture']) && !empty($user['profile_picture']) ? $user['profile_picture'] : 'uploads/defaultprof.jpg';
+
+$stmt->close();
+$db->close();
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -18,39 +47,58 @@
     <title>Dashboard</title>
 </head>
 <body>
-    <nav>
-    <div class="dashboard-container">
+<nav>
+        <div class="dashboard-container">
 
-    <div class="dashboard-header">
-        <div class="logo-container">
-        <img src="images/dashboard.png" alt="">
-        </div>
-        <div class="dashboard-header-right">
-            <div class="notification-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2m6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1z" />
-            </svg>
-            <p>Notification</p>
+            <div class="dashboard-header">
+                <div class="logo-container">
+                    <img src="images/dashboard.png" alt="Dashboard Logo">
+                </div>
+                <div class="dashboard-header-right">
+                    <div class="notification">
+                    <div class="notification-icon">
+                        <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor"
+                                d="M12 22c1.1 0 2-.9 2-2h-4a2 2 0 0 0 2 2m6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1z" />
+                        </svg>
+                        <p>Notification</p>
+                    </div>
+                    <div class="notification-dropdown">
+                        <div class="notification-dropdown-content">
+                            <p>No new notifications</p>
+                            <a href="#">View all notifications</a>
+                        </div>
+                            
+                    </div>
+                </div>
+                    <div class="profile">
+                    <img src="<?php echo $profilePicturePath; ?>" alt="Profile Picture">
+                        <div class="profile-dropdown">
+                        <p>Welcome, <?php echo $_SESSION['fullname']; ?></p>
+                        <div class="profile-dropdown-content">
+                            <a href="profile.php">Profile</a>
+                            <a href="#">Manage User Access</a>
+                            <a href="#">Audit Logs</a>
+                            <a href="logout.php">Logout</a>
+
+                        </div>
+                    </div>
+                    <svg class="arrow-down-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6z" />
+                        </svg>
+                </div>
             </div>
-            <div class="profile">
-            <img src="images/profile.jpg" alt="">
-            <p>Welcome, John Doe</p>
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-            <path fill="currentColor" d="M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6l-6-6z" />
-            </svg>
-            </div>
-        </div>
-    </div>
     </nav>
+
 
 
 <div class="dashboard-content">
 
     <div class="dashboard-content-button">
-    <div class="search-container">
-    <input type="text" id="searchInput" placeholder="Search" class="search-input">
-    <button class="search-btn" id="searchBtn">Search</button>
-</div>
+        <div class="search-container">
+            <input type="text" placeholder="Search" class="search-input">
+            <button class="search-btn">Search</button>
+        </div>
         <div class="button-container">
             <button class="add-btn" id="add-btn">Add</button>
             <button disabled class="edit-btn" id="edit-btn">Edit</button>
@@ -68,11 +116,11 @@
                     </div>
                     <div>
                     <label for="mName">Middle Name</label><br>
-                    <input type="text" id="mName" name="mName" class="input-text" required disabled>
+                    <input type="text" id="mName" name="mName" placeholder="Middle Name" class="input-text" required disabled>
                     </div>
                     <div>
                     <label for="email">Surname</label><br>
-                    <input type="text" id="surname" name="surname"  class="input-text" required disabled>
+                    <input type="text" id="surname" name="surname" placeholder="Surname"  class="input-text" required disabled>
                     </div>
                     <div>
                     <label for="suffix">Suffix</label><br>
@@ -118,19 +166,19 @@
 
                 <div>
                 <label for="homeNo">Home Number</label><br>
-                <input type="text" id="homeNo" name="homeNo" class="input-text" required disabled>
+                <input type="text" id="homeNo" name="homeNo" placeholder="Home No." class="input-text" required disabled>
                 </div>
                 <div>
                 <label for="street">Street</label><br>
-                <input type="text" id="street" name="street" class="input-text" required disabled>
+                <input type="text" id="street" name="street" placeholder="St." class="input-text" required disabled>
                 </div>
                 <div>
                 <label for="baranggay">Baranggay</label><br>
-                <input type="text" id="baranggay" name="baranggay" class="input-text" required disabled>
+                <input type="text" id="baranggay" name="baranggay" placeholder="Brgy" class="input-text" required disabled>
                 </div>
                 <div>
                 <label for="city">City</label><br>
-                <input type="text" id="city" name="city" class="input-text" required disabled>
+                <input type="text" id="city" name="city" placeholder="City" class="input-text" required disabled>
                 </div>
 
                 </div>
@@ -138,11 +186,11 @@
                     
                 <div>
                 <label for="province">Province</label><br>
-                <input type="text" id="province" name="province" class="input-text" required disabled>
+                <input type="text" id="province" name="province" placeholder="Province" class="input-text" required disabled>
                 </div>
                 <div>
                 <label for="region">Region</label><br>
-                <input type="text" id="region" name="region" class="input-text" required disabled>
+                <input type="text" id="region" name="region" placeholder="Region" class="input-text" required disabled>
                 </div>
 
                 </div>
@@ -169,7 +217,7 @@
                     </div>
                     <div>
                     <label for="idNo">ID Number</label><br>
-                    <input type="text" id="idNo" name="idNo" class="input-text" required disabled>
+                    <input type="text" id="idNo" name="idNo" placeholder="xx-xx-xxxx" class="input-text" required disabled>
                     </div>
                     <div>
                         <label for="expiryDate">Expiry Date</label><br>
@@ -177,7 +225,7 @@
                     </div>
                     <div>
                         <label for="photo">Upload photo of ID</label><br>
-                        <input type="file" accept="image/*" id="idPhoto" name="idPhoto" class="img-input" disabled>
+                        <input type="file" accept="image/*" id="idPhoto" name="idPhoto"   class="img-input" disabled>
                         <div id="idPhotoPreview"></div>
 
                     </div>
@@ -188,25 +236,25 @@
                 <div class="input-row">
                     <div>
                         <label for="employerName">Name of Employer</label><br>
-                        <input type="text" id="employerName" name="employerName" class="input-text" required disabled>
+                        <input type="text" id="employerName" name="employerName" placeholder="Name of Employer" class="input-text" required disabled>
                     </div>
                     <div>
                         <label for="noOfYearsWorked">No. of Years with Employer</label><br>
-                        <input type="number" id="noOfYearsWorked" class="input-text" name="noOfYearsWorked" required disabled>
+                        <input type="number" id="noOfYearsWorked"  placeholder="No." class="input-text" name="noOfYearsWorked" required disabled>
                     </div>
                     <div>
                         <label for="position">Position</label><br>
-                        <input type="text" id="position" name="position" class="input-text" disabled>
+                        <input type="text" id="position" name="position"  placeholder="Position" class="input-text" disabled>
                     </div>
                     <div>
                         <label for="phoneNoEmployer">Employer's Phone Number</label><br>
-                        <input type="tel" id="phoneNoEmployer" name="phoneNoEmployer" class="input-text" disabled>
+                        <input type="tel" id="phoneNoEmployer" name="phoneNoEmployer" placeholder="09**********" class="input-text" disabled>
                     </div>
                 </div>
                 <div class="input-row">
                     <div>
                         <label for="salary">Salary</label><br>
-                        <input type="number" id="salary" name="salary" class="input-text" disabled>
+                        <input type="number" id="salary" name="salary"  placeholder="Salary" class="input-text" disabled>
                     </div>
                 </div>
 
@@ -214,29 +262,29 @@
                 <div class="input-row">
                     <div>
                     <label for="homeNo">Home Number</label><br>
-                    <input type="text" id="homeNo" name="homeNo" class="input-text" required disabled>
+                    <input type="text" id="homeNo" name="homeNo" placeholder="Home No." class="input-text" required disabled>
                     </div>
                     <div>
                     <label for="street">Street</label><br>
-                    <input type="text" id="street" name="street" class="input-text" required disabled>
+                    <input type="text" id="street" name="street" placeholder="St." class="input-text" required disabled>
                     </div>
                     <div>
                     <label for="baranggay">Baranggay</label><br>
-                    <input type="text" id="baranggay" name="baranggay" class="input-text" required disabled>
+                    <input type="text" id="baranggay" name="baranggay" placeholder="Brgy." class="input-text" required disabled>
                     </div>
                     <div>
                     <label for="city">City</label><br>
-                    <input type="text" id="city" name="city" class="input-text" required disabled>
+                    <input type="text" id="city" name="city" placeholder="City" class="input-text" required disabled>
                     </div>
                 </div>
                 <div class="input-row-few">
                     <div>
                     <label for="province">Province</label><br>
-                    <input type="text" id="province" name="province" class="input-text" required disabled>
+                    <input type="text" id="province" name="province" placeholder="Province" class="input-text" required disabled>
                     </div>
                     <div>
                     <label for="region">Region</label><br>
-                    <input type="text" id="region" name="region" class="input-text" required disabled>
+                    <input type="text" id="region" name="region" placeholder="Region" class="input-text" required disabled>
                     </div>
                 </div>
 
@@ -261,15 +309,16 @@
                         <input type="date" id="expiryDate" name="expiryDate" class="input-text" disabled>
                     </div>
                     <div>
-                    <label for="uploadInsurance">Upload Insurance</label><br>
-            <input type="file" id="uploadInsurance" name="uploadInsurance" class="img-input" required disabled>
-                        <div id="insurancePhotoPreview"></div>
+                    <label for="insurancePhoto">Upload Insurance</label><br>
+<input type="file" id="insurancePhoto" name="uploadInsurance" class="img-input" disabled>
+<div id="insurancePhotoPreview"></div>
                     </div>
+
                 </div> 
                 <div class="input-row-few">
         <div>
             <label for="dependentName">Name of Dependent</label><br>
-            <input type="text" id="dependentName" name="dependentName" class="input-text" required disabled>
+            <input type="text" id="dependentName" name="dependentName" placeholder="Name" class="input-text" required disabled>
         </div>
         <div>
             <label for="dependentContactNo">Dependent Contact No.</label><br>

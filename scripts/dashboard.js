@@ -1,3 +1,5 @@
+document.addEventListener('DOMContentLoaded', function() {
+
 const addbtn = document.getElementById('add-btn');
 let editbtn = document.getElementById('edit-btn');
 let deletebtn = document.getElementById('delete-btn');
@@ -11,8 +13,35 @@ let idPhotoPreview = document.getElementById('idPhotoPreview');
 let insurancePhotoInput = document.getElementById('insurancePhoto');
 let insurancePhotoPreview = document.getElementById('insurancePhotoPreview');
 let imgInput = document.querySelectorAll('.img-input');
+let profileDropdown = document.querySelector('.profile-dropdown');
+let arrowDownIcon = document.querySelector('.arrow-down-icon'); 
+const notificationIcon = document.querySelector('.notification-icon');
+const notificationDropdown = document.querySelector('.notification-dropdown');
 
 const zooming = new Zooming();
+profileDropdown.addEventListener('mouseover', function(){
+    console.log('hovered');
+    arrowDownIcon.style.transform = 'rotate(180deg)';
+    arrowDownIcon.style.transition = 'transform 0.5s ease';
+});
+
+profileDropdown.addEventListener('mouseout', function(){
+    arrowDownIcon.style.transform = 'rotate(0deg)';
+    arrowDownIcon.style.transition = 'transform 0.5s ease';
+});
+
+notificationIcon.addEventListener('click', function() {
+    notificationDropdown.style.display = notificationDropdown.style.display === 'block' ? 'none' : 'block';
+});
+// Close the dropdown if the user clicks outside of it
+window.addEventListener('click', function(event) {
+    if (!event.target.closest('.notification')) {
+        if (notificationDropdown.style.display === 'block') {
+            notificationDropdown.style.display = 'none';
+        }
+    }
+});
+
 
 addbtn.addEventListener('click',function(){
     console.log('clicked add button');
@@ -89,43 +118,51 @@ collateralInput.addEventListener('change', function() {
         };
         reader.readAsDataURL(file);
     }
+}, false);
+
+
+
+// Javascript for the table
+const tableAllBtn = document.getElementById('tblAllBtn');
+let tableAddBtn = document.getElementById('addBtn');
+const tablePaymentBtn = document.getElementById('tblPaymentBtn');
+const tableLoanBtn = document.getElementById('tblLoanBtn');
+const tableGroceryBtn = document.getElementById('tblGroceryBtn');
+
+
+tableAllBtn.addEventListener('click', function() {
+    tableAddBtn.style.display = 'none';
+    tableAllBtn.classList.add('active');
+    tableLoanBtn.classList.remove('active');
+    tableGroceryBtn.classList.remove('active');
+    tablePaymentBtn.classList.remove('active');
+
 });
-document.addEventListener('DOMContentLoaded', function () {
-    const searchInput = document.getElementById('searchInput');
-    const searchBtn = document.getElementById('searchBtn');
-    const table = document.getElementById('dataTable');
-    const rows = table.getElementsByTagName('tr');
-
-    searchBtn.addEventListener('click', function () {
-        const searchText = searchInput.value.toLowerCase();
-
-        for (let i = 1; i < rows.length; i++) { // Start from 1 to skip the header row
-            const row = rows[i];
-            const cells = row.getElementsByTagName('td');
-            let match = false;
-
-            for (let j = 0; j < cells.length; j++) {
-                const cellText = cells[j].textContent.toLowerCase();
-                if (cellText.includes(searchText)) {
-                    match = true;
-                    break;
-                }
-            }
-
-            if (match) {
-                row.style.display = '';
-            } else {
-                row.style.display = 'none';
-            }
-        }
-    });
-
-    // Optional: Clear search and show all rows when the search input is empty
-    searchInput.addEventListener('input', function () {
-        if (searchInput.value === '') {
-            for (let i = 1; i < rows.length; i++) {
-                rows[i].style.display = '';
-            }
-        }
-    });
+tablePaymentBtn.addEventListener('click', function() {
+    tableAddBtn.style.display = 'block';
+    tableAddBtn.innerHTML = 'Add New Payment';
+    tablePaymentBtn.classList.add('active');
+    tableLoanBtn.classList.remove('active');
+    tableGroceryBtn.classList.remove('active');
+    tableAllBtn.classList.remove('active');
 });
+tableLoanBtn.addEventListener('click', function() { 
+    tableAddBtn.style.display = 'block';
+    tableAddBtn.innerHTML = 'Add New Loan';
+    tableLoanBtn.classList.add('active');
+    tableGroceryBtn.classList.remove('active');
+    tablePaymentBtn.classList.remove('active');
+    tableAllBtn.classList.remove('active');
+
+});
+tableGroceryBtn.addEventListener('click', function() {
+    tableAddBtn.style.display = 'block';
+    tableAddBtn.innerHTML = 'Add New Grocery';
+    tableGroceryBtn.classList.add('active');
+    tableLoanBtn.classList.remove('active');
+    tablePaymentBtn.classList.remove('active');
+    tableAllBtn.classList.remove('active');
+});
+
+});
+

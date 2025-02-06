@@ -17,28 +17,98 @@ if (isset($_POST['signup'])) {
 
     // Check if password and confirm password match
     if ($password !== $confpass) {
-        echo "<script>alert('Passwords do not match.')</script>";
+        echo "<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    swal({
+                        title: 'Error',
+                        text: 'Passwords do not match.',
+                        icon: 'error',
+                        button: 'OK',
+                        }).then(function() {
+                        window.location.href = window.location.href;
+                    });
+                });
+              </script>";
     } 
     // Check if password is at least 6 characters long
     elseif (strlen($password) < 6) {
-        echo "<script>alert('Password must be at least 6 characters long.')</script>";
+        echo "<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    swal({
+                        title: 'Error',
+                        text: 'Password must be at least 6 characters long.',
+                        icon: 'error',
+                        button: 'OK',
+                        }).then(function() {
+                        window.location.href = window.location.href;
+                    });
+                });
+              </script>";
     } 
     // Check if fullname is blank
     elseif ($fname == "") {
-        echo "<script>alert('Fullname cannot be blank.')</script>";
+        echo "<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    swal({
+                        title: 'Error',
+                        text: 'Fullname cannot be blank.',
+                        icon: 'error',
+                        button: 'OK',
+                        }).then(function() {
+                        window.location.href = window.location.href;
+                    });
+                });
+              </script>";
     } 
     // Check if email is already in use
     elseif (emailExists($db, $email)) {
-        echo "<script>alert('Email is already in use. Please use a different email.')</script>";
+        echo "<script>
+                document.addEventListener('DOMContentLoaded', function() {
+                    swal({
+                        title: 'Error',
+                        text: 'Email is already in use. Please use a different email.',
+                        icon: 'error',
+                        button: 'OK',
+                    }).then(function() {
+                        window.location.href = window.location.href;
+                    });
+                });
+              </script>";
     } 
     else {
         // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
-        // Insert user into the database
-        $sql = "INSERT INTO users (fullname, email, password) VALUES (?, ?, ?)";
+        // Handle profile picture upload
+        $profilePicture = null;
+        if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == 0) {
+            // Set upload directory and file name
+            $targetDir = "uploads/" . strtolower(str_replace(" ", "_", $fname)) . "/profile/"; // User-specific folder
+            $targetFile = $targetDir . basename($_FILES["profile_picture"]["name"]);
+            $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+            
+            // Create user folder if it doesn't exist
+            if (!file_exists($targetDir)) {
+                mkdir($targetDir, 0777, true);
+            }
+            
+            // Check if the file is an image
+            if (getimagesize($_FILES["profile_picture"]["tmp_name"]) !== false) {
+                // Move the uploaded file to the server directory
+                if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $targetFile)) {
+                    $profilePicture = $targetFile; // Store the image path
+                } else {
+                    echo "<script>alert('Sorry, there was an error uploading your file.')</script>";
+                }
+            } else {
+                echo "<script>alert('File is not an image.')</script>";
+            }
+        }
+
+        // Insert user into the database, including profile picture
+        $sql = "INSERT INTO users (fullname, email, password, profile_picture) VALUES (?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
-        $stmt->bind_param("sss", $fname, $email, $hashedPassword);
+        $stmt->bind_param("ssss", $fname, $email, $hashedPassword, $profilePicture);
 
         if ($stmt->execute()) {
             // SweetAlert for successful sign-up
@@ -79,6 +149,7 @@ function emailExists($db, $email) {
     return $exists;
 }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -102,27 +173,31 @@ function emailExists($db, $email) {
         </div>
         <div class="signup-form-container">
             <h1 class="signup-header">Sign-up</h1>
-            <form action="" method="post" class="signup-form">
-                <label for="fullname">Full Name</label>
-                <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
-                <label for="email">Email Address</label>
-                <br>
-                <input type="text" name="email" id="email" placeholder="Please enter your email" required>
-                <br>
-                <label for="password" class="strong">Password</label>
-                <br>
-                <input type="password" id="password" name="password" placeholder="Create a password" required>
-                <label for="confirm_password">Confirm Password</label>
-                <br>
-                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
-                <br>
-                <div class="signup-button-container">
-                    <button type="submit" name="signup" class="signup-button">Sign Up</button>
-                </div>
-                <div class="login-container">
-                    <p>Already have an account? <a href="index.php">Log-in</a></p>
-                </div>
-            </form>
+            <form action="" method="post" class="signup-form" enctype="multipart/form-data">
+    <label for="fullname">Full Name</label>
+    <input type="text" id="fullname" name="fullname" placeholder="Enter your full name" required>
+    
+    <label for="email">Email Address</label>
+    <input type="text" name="email" id="email" placeholder="Please enter your email" required>
+    
+    <label for="password" class="strong">Password</label>
+    <input type="password" id="password" name="password" placeholder="Create a password" required>
+    
+    <label for="confirm_password">Confirm Password</label>
+    <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
+    
+    <label for="profile_picture">Profile Picture</label>
+    <input type="file" name="profile_picture" id="profile_picture" accept="image/*">
+    
+    <div class="signup-button-container">
+        <button type="submit" name="signup" class="signup-button">Sign Up</button>
+    </div>
+    
+    <div class="login-container">
+        <p>Already have an account? <a href="index.php">Log-in</a></p>
+    </div>
+</form>
+
         </div>
     </div>
 </body>

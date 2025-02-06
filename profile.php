@@ -114,35 +114,23 @@ $db->close();
         <div class="profile-info">
             <h1>Personal Information</h1>
             <form action="update_profile.php" method="post">
-    <label for="Name">Full Name</label><br>
-    <input type="text" id="Name" class="inputs" name="full_name" value="<?php echo $fullname; ?>" disabled><br>
+                <label for="Name">Full Name</label><br>
+                <input type="text" id="Name" class="inputs" name="Name" value="<?php echo $fullname; ?>" disabled><br>
 
-    <label for="Email">Email</label><br>
-    <input type="email" id="Email" class="inputs" name="email" value="<?php echo $email; ?>" disabled><br>
+                <label for="Email">Email</label><br>
+                <input type="email" id="Email" class="inputs" name="Email" value="<?php echo $email; ?>" disabled><br>
 
-    <label for="Password">Password</label><br>
-    <input type="password" id="Password" class="inputs" name="password" disabled><br>
+                <label for="Password">Password</label><br>
+                <input type="password" id="Password" class="inputs" name="Password" disabled><br>
 
-    <label for="Confirm Password">Confirm Password</label><br>
-    <input type="password" id="Confirm Password" class="inputs" name="confirm_password" disabled><br>
+                <label for="Confirm Password">Confirm Password</label><br>
+                <input type="password" id="Confirm Password" class="inputs" name="Confirm Password" disabled><br>
 
-    <div class="profile-button-container">
-        <button type="button" id="edit-profile-btn">Edit Profile</button>
-        <button type="submit" id="save-profile-btn" name="edit_profile" disabled>Save Profile</button>
-    </div>
-</form>
-
-<script>
-    document.getElementById("edit-profile-btn").addEventListener("click", function() {
-        // Enable the input fields
-        document.getElementById("Name").disabled = false;
-        document.getElementById("Email").disabled = false;
-        document.getElementById("Password").disabled = false;
-        document.getElementById("Confirm Password").disabled = false;
-        document.getElementById("save-profile-btn").disabled = false;
-    });
-</script>
-
+                <div class="profile-button-container">
+                    <button type="button" id="edit-profile-btn">Edit Profile</button>
+                    <button type="submit" id="save-profile-btn" name="edit_profile">Save Profile</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
