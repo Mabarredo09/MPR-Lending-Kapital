@@ -8,7 +8,7 @@ if (isset($_POST['signup'])) {
     $confpass = $_POST['confirm_password'];
 
     // Database connection
-    $db = new mysqli('localhost', 'root', '', 'wewz');
+    $db = new mysqli('localhost', 'root', '', 'mprlendingdb');
 
     // Check connection
     if ($db->connect_error) {

@@ -2,7 +2,7 @@
 $servername = "localhost";
 $username = "root";
 $password = "";
-$dbname = "wewz";  // Replace with your actual database name
+$dbname = "mprlendingdb";  // Replace with your actual database name
 
 // Create connection
 $conn = mysqli_connect($servername, $username, $password, $dbname);

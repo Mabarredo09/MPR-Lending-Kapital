@@ -1,7 +1,7 @@
 <?php
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Database connection
-    $conn = new mysqli("localhost", "root", "", "wewz");
+    $conn = new mysqli("localhost", "root", "", "mprlendingdb");
 
     if ($conn->connect_error) {
         die("Connection failed: " . $conn->connect_error);

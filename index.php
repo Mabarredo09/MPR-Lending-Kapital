@@ -10,7 +10,7 @@ if (isset($_POST['login'])) {
         echo "<script>alert('Please fill in both email and password fields.')</script>";
     } else {
         // Database connection
-        $db = new mysqli('localhost', 'root', '', 'wewz');
+        $db = new mysqli('localhost', 'root', '', 'mprlendingdb');
 
         // Check connection
         if ($db->connect_error) {

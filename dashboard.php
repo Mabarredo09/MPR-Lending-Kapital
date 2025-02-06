@@ -3,7 +3,7 @@
 session_start();
 
 // Database connection
-$db = new mysqli('localhost', 'root', '', 'wewz');
+$db = new mysqli('localhost', 'root', '', 'mprlendingdb');
 
 // Check connection
 if ($db->connect_error) {
