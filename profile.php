@@ -3,13 +3,13 @@
 session_start();
 
 // Database connection
-$db = new mysqli('localhost', 'root', '', 'wewz');
+$db = new mysqli('localhost', 'root', '', 'mprlendingdb');
 
 // Check connection
 if ($db->connect_error) {
     die("Connection failed: " . $db->connect_error);
 }
-
+ 
 // Fetch the profile picture path and user details for the logged-in user
 $user_id = $_SESSION['user_id'];
 $sql = "SELECT profile_picture, fullname, email, password FROM users WHERE id = ?";
@@ -113,24 +113,28 @@ $db->close();
 
         <div class="profile-info">
             <h1>Personal Information</h1>
-            <form action="update_profile.php" method="post">
-                <label for="Name">Full Name</label><br>
-                <input type="text" id="Name" class="inputs" name="Name" value="<?php echo $fullname; ?>" disabled><br>
+            <!-- Add 'Enable editing' functionality -->
+            <form action="update_profile.php" method="post" enctype="multipart/form-data" id="profile-form">
+    <label for="Name">Full Name</label><br>
+    <input type="text" id="Name" class="inputs" name="fullname" value="<?php echo $fullname; ?>" disabled><br>
 
-                <label for="Email">Email</label><br>
-                <input type="email" id="Email" class="inputs" name="Email" value="<?php echo $email; ?>" disabled><br>
+    <label for="Email">Email</label><br>
+    <input type="email" id="Email" class="inputs" name="email" value="<?php echo $email; ?>" disabled><br>
 
-                <label for="Password">Password</label><br>
-                <input type="password" id="Password" class="inputs" name="Password" disabled><br>
+    <label for="Password">Password</label><br>
+    <input type="password" id="Password" class="inputs" name="password" disabled><br>
 
-                <label for="Confirm Password">Confirm Password</label><br>
-                <input type="password" id="Confirm Password" class="inputs" name="Confirm Password" disabled><br>
+    <label for="Confirm Password">Confirm Password</label><br>
+    <input type="password" id="ConfirmPassword" class="inputs" name="confirm_password" disabled><br>
 
-                <div class="profile-button-container">
-                    <button type="button" id="edit-profile-btn">Edit Profile</button>
-                    <button type="submit" id="save-profile-btn" name="edit_profile">Save Profile</button>
-                </div>
-            </form>
+    <div class="profile-button-container">
+        <button type="button" id="edit-profile-btn">Edit Profile</button>
+        <button type="submit" id="save-profile-btn" name="update_details" disabled>Save Profile</button>
+    </div>
+</form>
+
+
+
         </div>
     </div>
 </div>
