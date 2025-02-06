@@ -21,7 +21,7 @@ if (isset($_POST['signup'])) {
                         button: 'OK',
                     });
                 });
-              </script>";   
+              </script>";
         exit();
     }
 
@@ -39,7 +39,7 @@ if (isset($_POST['signup'])) {
                     });
                 });
               </script>";
-    } 
+    }
     // Check if password is at least 6 characters long
     elseif (strlen($password) < 6) {
         echo "<script>
@@ -54,7 +54,7 @@ if (isset($_POST['signup'])) {
                     });
                 });
               </script>";
-    } 
+    }
     // Check if fullname is blank
     elseif ($fname == "") {
         echo "<script>
@@ -69,7 +69,7 @@ if (isset($_POST['signup'])) {
                     });
                 });
               </script>";
-    } 
+    }
     // Check if email is already in use
     elseif (emailExists($db, $email)) {
         echo "<script>
@@ -84,8 +84,7 @@ if (isset($_POST['signup'])) {
                     });
                 });
               </script>";
-    } 
-    else {
+    } else {
         // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
@@ -129,7 +128,8 @@ if (isset($_POST['signup'])) {
 }
 
 // Function to check if email already exists in the database
-function emailExists($db, $email) {
+function emailExists($db, $email)
+{
     $sql = "SELECT * FROM users WHERE email = ?";
     $stmt = $db->prepare($sql);
     $stmt->bind_param("s", $email);
@@ -144,6 +144,7 @@ function emailExists($db, $email) {
 ?>
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -152,11 +153,14 @@ function emailExists($db, $email) {
     <!-- Google Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Source+Serif+4:ital,opsz,wght@0,8..60,200..900;1,8..60,200..900&display=swap"
+        rel="stylesheet">
     <!-- SweetAlert Library -->
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
     <title>Sign-Up</title>
 </head>
+
 <body>
 
     <div class="signup-container">
@@ -177,7 +181,8 @@ function emailExists($db, $email) {
                 <input type="password" id="password" name="password" placeholder="Create a password" required>
                 <label for="confirm_password">Confirm Password</label>
                 <br>
-                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password" required>
+                <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm your password"
+                    required>
                 <br>
                 <div class="signup-button-container">
                     <button type="submit" name="signup" class="signup-button">Sign Up</button>
@@ -189,4 +194,5 @@ function emailExists($db, $email) {
         </div>
     </div>
 </body>
+
 </html>

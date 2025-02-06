@@ -58,7 +58,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Function to handle file uploads
-    function uploadFile($file, $prefix, $customerDir) {
+    function uploadFile($file, $prefix, $customerDir)
+    {
         if ($file['error'] === UPLOAD_ERR_OK) {
             $fileName = $prefix . "_" . basename($file['name']); // Append prefix to file name
             $filePath = $customerDir . $fileName;

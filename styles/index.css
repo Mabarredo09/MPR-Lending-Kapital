@@ -1,20 +1,25 @@
-*{
+* {
     font-family: "Source Serif 4", serif;
 }
-body{
+
+body {
     background-color: #F5F6FA;
     display: flex;
     height: 98vh;
 }
+
 a {
-    color: #1E3E62; /* Use the inherited color */
+    color: #1E3E62;
+    /* Use the inherited color */
 }
 
 a:active,
 a:focus {
-    color: inherit; /* Ensure the color does not change */
+    color: inherit;
+    /* Ensure the color does not change */
 }
-.login-container{
+
+.login-container {
     display: flex;
     flex-direction: row;
     justify-content: center;
@@ -24,17 +29,20 @@ a:focus {
     height: 606px;
     border-radius: 50px;
 }
-.login-container h1{
+
+.login-container h1 {
     font-size: 60px;
     font-weight: 900;
     margin: 0 0 100px 0;
 }
-.logo-container{
+
+.logo-container {
     border-top-left-radius: 20px;
     border-bottom-left-radius: 20px;
     width: 65%;
 }
-.logo{
+
+.logo {
     border-right: 1px solid black;
     height: 606px;
     width: 100%;
@@ -45,12 +53,15 @@ a:focus {
     object-position: left center;
 }
 
-.form-container{
+.form-container {
     width: 35%;
     border-radius: 10px;
     padding: 20px;
 }
-input[type="text"], input[type="password"], input[type="email"]{
+
+input[type="text"],
+input[type="password"],
+input[type="email"] {
     font-weight: 500;
     font-size: 18px;
     height: 10px;
@@ -60,7 +71,8 @@ input[type="text"], input[type="password"], input[type="email"]{
     border-radius: 50px;
     border: 1px solid black;
 }
-.login-button{
+
+.login-button {
     font-weight: 1000;
     font-size: 30px;
     margin-top: 10px;
@@ -72,11 +84,13 @@ input[type="text"], input[type="password"], input[type="email"]{
     color: white;
     cursor: pointer;
 }
-.strong{
-    font-weight: 500;
-    font-size:20px;
-}
-.signup-container{
 
-text-align: center;
+.strong {
+    font-weight: 500;
+    font-size: 20px;
+}
+
+.signup-container {
+
+    text-align: center;
 }

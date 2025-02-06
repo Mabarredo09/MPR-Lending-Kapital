@@ -12,6 +12,7 @@ body {
     margin: 0 0 0 0;
 }
 
+/* Start of Navigation Bar CSS */
 .dashboard-container {
     display: flex;
     flex-direction: column;
@@ -124,6 +125,14 @@ body {
     vertical-align: middle;
 }
 
+.dashboard-header-right-content {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin: 0 20px 0 0;
+    cursor: pointer;
+}
+
 .notification-dropdown {
     display: none;
     position: absolute;
@@ -153,114 +162,78 @@ body {
     border-bottom: none;
 }
 
-.profile-container {
+/* End of Navigation Bar CSS */
+
+/* Start of Main Content CSS */
+.manage-user-access-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    margin: 20px 20px 20px 20px;
     padding: 20px;
 }
 
-.profile-content {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    margin: 20px 0 0 0;
+.manage-user-access-header {
+    font-weight: 900;
+    margin: 0 0 20px 0;
+    padding: 20px;
 }
 
-.profile-container img {
-    width: 200px;
-    height: 200px;
-    border-radius: 50%;
-    object-fit: cover;
-}
-
-.profile-picture {
-    display: flex;
+.manage-user-access-buttons {
     width: 90%;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    border: 1px solid black;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    margin: 0 0 20px 0;
     background-color: white;
-    margin: 20px 0 20px 0;
     border-radius: 20px;
     padding: 20px;
 }
 
-.profile-picture form {
+.manage-user-access-buttons button {
+    background-color: #0B192C;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 10px;
+    cursor: pointer;
+}
+
+.add-button {
+    display: none;
+}
+
+.manage-user-access-table {
+    width: 90%;
+    background-color: white;
+    border-radius: 20px;
+    padding: 20px;
+}
+
+table {
+    display: table;
+    border-collapse: separate;
+    border-spacing: 0;
+    border-color: black;
+    border: 1px solid #ddd;
     width: 100%;
 }
 
-.upload-profile-picture-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
+th,
+td {
+    border: 1px solid #ddd;
+    text-align: left;
+    padding: 8px;
 }
 
-.upload-profile-picture-btn-container {
-    display: flex;
-    flex-direction: column;
+td:nth-child(2) {
+    text-align: center;
 }
 
-.confirm-upload-profile-btn-container {
-    display: flex;
-    align-items: end !important;
-    justify-content: right !important;
-    gap: 10px;
-}
-
-#upload-profile-btn {
-    background-color: #c1c1c1;
-    color: white;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#cancel-upload-profile-btn {
-    display: none;
-    background-color: red;
-    color: white;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-.profile-info {
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-    padding: 20px;
-    background-color: white;
-    border-radius: 20px;
-    align-items: left !important;
-    margin: 20px 0 20px 0;
-    border: 1px solid black;
-}
-
-.profile-button-container {
-    display: flex;
-    flex-direction: row;
-    justify-content: right;
-    gap: 15px;
-    align-items: center;
-}
-
-#edit-profile-btn {
-    background-color: #1E3E62;
-    color: white;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-}
-
-#save-profile-btn {
-    background-color: #C1C1C1;
-    color: white;
-    padding: 10px 30px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.table-profile-picture {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    object-fit: cover;
 }
