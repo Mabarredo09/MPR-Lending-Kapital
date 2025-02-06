@@ -60,7 +60,7 @@ input[type="text"], input[type="password"], input[type="email"]{
     border-radius: 50px;
     border: 1px solid black;
 }
-input[type="submit"]{
+.login-button{
     font-weight: 1000;
     font-size: 30px;
     margin-top: 10px;
