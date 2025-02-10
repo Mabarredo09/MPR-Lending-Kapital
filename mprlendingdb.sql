@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Feb 06, 2025 at 07:52 AM
+-- Generation Time: Feb 10, 2025 at 06:24 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `wewz`
+-- Database: `mprlendingdb`
 --
 
 -- --------------------------------------------------------
@@ -72,9 +72,11 @@ CREATE TABLE `borrowers` (
 --
 
 INSERT INTO `borrowers` (`id`, `first_name`, `middle_name`, `surname`, `suffix`, `sex`, `dob`, `marital_status`, `contact_number`, `home_no`, `street`, `baranggay`, `city`, `province`, `region`, `id_type`, `id_no`, `expiry_date`, `id_photo`, `employer_name`, `years_with_employer`, `position`, `phone_no_employer`, `salary`, `employer_home_no`, `employer_street`, `employer_baranggay`, `employer_city`, `employer_province`, `employer_region`, `insurance_type`, `insurance_issued_date`, `insurance_expiry_date`, `insurance_file`, `dependent_name`, `dependent_contact_no`, `collateral_files`) VALUES
-(33, 'Mark', 'Gapac', 'olpot', 'Sr.', 'female', '2025-02-28', 'single', '09953838730', '1213', 'Purok 7', 'poblacion west 4', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '3', 'Birth Certificate', '22232', '2025-03-05', 'uploads/Mark_olpot/ID_id2.jpg', 'tado olpot', 3213213, 'gm', '09953838730', 99999999.99, '1213', 'Purok 7', 'poblacion west 4', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '3', 'Single Premium', '2025-02-18', '2025-03-05', 'uploads/Mark_olpot/Insurance_id.jpg', 'Michael Seva', '09123456789', 'uploads/Mark_olpot/Collateral_1_driverlincense.jpg,uploads/Mark_olpot/Collateral_2_Untitled design (1)_processed.png,uploads/Mark_olpot/Collateral_3_Untitled design (1).png,uploads/Mark_olpot/Collateral_4_id.jpg,uploads/Mark_olpot/Collateral_5_id2.jpg'),
-(34, 'mj', 'barredo', 'olpot', 'Sr.', 'male', '2025-02-05', 'single', '09953838730', '1213', 'Purok 7', 'poblacion west 3', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '4', 'Driver\'s License', '22232', '2025-02-18', 'uploads/mj_olpot/ID_id.jpg', 'tado olpot', 12, 'manager', '09953838730', 321.00, '1213', 'Purok 7', 'poblacion west 3', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '4', 'Life Insurance', '2025-03-04', '2025-02-18', 'uploads/mj_olpot/Insurance_driverlincense.jpg', 'Michael Seva', '09123456789', 'uploads/mj_olpot/Collateral_1_Untitled design (1)_processed.png'),
-(35, 'maranatha', 'Gapac', 'Barredo', 'III', 'female', '2025-02-26', 'widowed', '09953838730', '1213', 'Purok 7', 'poblacion west 3', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '4', 'Passport', '22232', '2025-02-14', 'uploads/maranatha_Barredo/ID_pxfuel.jpg', 'tado olpot', 2, 'manager', '09953838730', 312312.00, '1213', 'Purok 7', 'poblacion west 3', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '4', 'None', '2025-02-20', '2025-02-14', 'uploads/maranatha_Barredo/Insurance_pxfuel.jpg', 'Michael Seva', '09123456789', 'uploads/maranatha_Barredo/Collateral_1_pxfuel.jpg');
+(36, 'maranatha', 'Gapac', 'Barredo', 'III', 'male', '2025-01-29', 'widowed', '09953838730', '1213', 'Purok 7', 'poblacion west 3', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '4', 'Driver\'s License', '22232', '2025-02-20', 'uploads/maranatha_Barredo/ID_driverlincense.jpg', 'mj', 23, 'manager', '09953838730', 2132321.00, '1213', 'Purok 7', 'poblacion west 3', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '4', 'Single Premium', '2025-02-19', '2025-02-20', 'uploads/maranatha_Barredo/Insurance_pxfuel.jpg', 'Michael Seva', '09123456789', 'uploads/maranatha_Barredo/Collateral_1_WIN_20241210_22_22_10_Pro - Copy.jpg,uploads/maranatha_Barredo/Collateral_2_WIN_20241210_22_22_10_Pro.jpg,uploads/maranatha_Barredo/Collateral_3_WIN_20241210_22_22_15_Pro - Copy.jpg,uploads/maranatha_Barredo/Collateral_4_WIN_20241210_22_22_15_Pro.jpg,uploads/maranatha_Barredo/Collateral_5_WIN_20250119_00_07_21_Pro.jpg'),
+(38, 'lokzkie', 'serrano', 'bustos', 'II', 'female', '2025-01-29', 'widowed', '09953838723', '12133232', 'Purok 732', 'poblacion west 43232', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '332', 'Voter\'s ID', '222323232', '2025-02-20', 'uploads/_bustos/ID_driverlincense.jpg', 'tado olpot', 112345, 'gmmmmm', '09953831111', 99999999.99, '12133232', 'Purok 732', 'poblacion west 43232', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '332', 'Family Premium', '2025-02-21', '2025-02-20', 'uploads/_bustos/Insurance_id2.jpg', 'Taka', '09123456321', 'uploads/_bustos/Collateral_1_driverlincense.jpg,uploads/_bustos/Collateral_2_id.jpg,uploads/_bustos/Collateral_3_id2.jpg'),
+(39, 'sun', 'Gapac', 'Barredo', 'III', 'male', '2025-01-29', 'widowed', '09953838730', '1213', 'Purok 7', 'poblacion west 3', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '4', 'Driver\'s License', '22232', '2025-02-20', 'uploads/maranatha_Barredo/ID_driverlincense.jpg', 'mj', 23, 'manager', '09953838730', 2132321.00, '1213', 'Purok 7', 'poblacion west 3', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '4', 'Single Premium', '2025-02-19', '2025-02-20', 'uploads/maranatha_Barredo/Insurance_pxfuel.jpg', 'Michael Seva', '09123456789', 'uploads/maranatha_Barredo/Collateral_1_WIN_20241210_22_22_10_Pro - Copy.jpg,uploads/maranatha_Barredo/Collateral_2_WIN_20241210_22_22_10_Pro.jpg,uploads/maranatha_Barredo/Collateral_3_WIN_20241210_22_22_15_Pro - Copy.jpg,uploads/maranatha_Barredo/Collateral_4_WIN_20241210_22_22_15_Pro.jpg,uploads/maranatha_Barredo/Collateral_5_WIN_20250119_00_07_21_Pro.jpg'),
+(40, 'jayson', 'serrano', 'bustos', 'II', 'female', '2025-01-29', 'widowed', '09953838723', '12133232', 'Purok 732', 'poblacion west 43232', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '332', 'Voter\'s ID', '222323232', '2025-02-20', 'uploads/_bustos/ID_driverlincense.jpg', 'tado olpot', 112345, 'gmmmmm', '09953831111', 99999999.99, '12133232', 'Purok 732', 'poblacion west 43232', 'Cabanatuan/Aliaga/Nueva Ecija', 'nueva ecija', '332', 'Family Premium', '2025-02-21', '2025-02-20', 'uploads/_bustos/Insurance_id2.jpg', 'Taka', '09123456321', 'uploads/_bustos/Collateral_1_driverlincense.jpg,uploads/_bustos/Collateral_2_id.jpg,uploads/_bustos/Collateral_3_id2.jpg'),
+(41, 'takahiro', 'sta maria', 'inoue', 'Jr.', 'male', '2025-01-16', 'married', '123456789011', '33333', 'Purok 1', 'pantoc', 'Cabanatuan City', 'nueva ecija', '3', 'Birth Certificate', '11111111', '2025-02-18', 'uploads/takahiro_inoue/ID_id.jpg', 'Mark Lozano', 5, 'general manager', '09953812345', 99999999.99, '33333', 'Purok 1', 'pantoc', 'Cabanatuan City', 'nueva ecija', '3', 'Single Premium', '2025-01-29', '2025-02-18', 'uploads/takahiro_inoue/Insurance_id2.jpg', 'Anthony Francisco', '091231234567', 'uploads/takahiro_inoue/Collateral_1_lendmoney-removebg-preview.png,uploads/takahiro_inoue/Collateral_2_lendmoney.jpg,uploads/takahiro_inoue/Collateral_3_moneylend.webp');
 
 -- --------------------------------------------------------
 
@@ -96,15 +98,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `fullname`, `email`, `password`, `created_at`, `profile_picture`) VALUES
-(1, 'Mark Nathaniel D. Olpot', 'olpottado@gmail.com', '$2y$10$N9DZk72RnQK/GdVV0AQSwuFjO6lGNUaPvyZEB9K1D0gMJbB8CSNV6', '2025-01-22 03:44:49', 'uploads/pxfuel.jpg'),
-(8, 'Mark Nathaniel D. Olpot', 'olpottado123@gmail.com', '$2y$10$0rchu2gUD1KStK4pXDlAx.g6ReTxGgeGZTB2VTzecI9B62if1oYw2', '2025-02-04 08:42:35', NULL),
-(9, 'Leopoldo Servana s', 'leo@gmail.com', '$2y$10$zvDFnVl1o4tRJvpuzKB50eL7gpXg4BMzwTsQffFT2JFXBwvN9PKCa', '2025-02-04 08:45:24', NULL),
-(10, 'Mark Nathaniel D. Olpot jr', 'tadoolpot@yahoo.com', '$2y$10$.GoeKJKtlHPtOz9Ew2iil.FZJ0c8DT3zYYrJoltOvt7VBnef8Eol.', '2025-02-04 08:49:42', NULL),
-(11, 'mj pogi', 'mj@yahoo.com', '$2y$10$Uso7g3mllkPvcLPc5T0vpuRfUiHK.TsRs.lsMrJH9F0n2vkGbOlxG', '2025-02-04 08:51:49', NULL),
-(12, 'asd', 'asd@gmail.com', '$2y$10$f48RBv0GtIC1dg4D2LQUR.q7WgBuROvOo5hSArBYQv15FfD2HxOaO', '2025-02-04 08:57:10', NULL),
-(14, 'lolzkie', 'lol@gmail.com', '$2y$10$pxD/c5JbuugOZglV2ghhxOgHMmKvr8ugD09Zk7j54KNzWhDWFk8wO', '2025-02-06 03:38:25', 'uploads/WIN_20241007_17_39_00_Pro.jpg'),
-(15, 'Leopoldo', 'leo123@gmail.com', '$2y$10$YCB8KRMLFCynzCjEds8dm.oJMuLH6Vx7odJRQbSKy5EMqbdB4GPoG', '2025-02-06 03:43:48', 'uploads/driverlincense.jpg'),
-(16, 'Leopoldo', 'olpottado321321@gmail.com', '$2y$10$muf69Ine7U5FmkkxZmyUiuGvzwZ1n663RxDTaS3YLwlfnfu8Ap0Wy', '2025-02-06 03:56:04', 'uploads/leopoldo/profile/id2.jpg');
+(17, 'Mark Nathaniel D. Olpot', 'olpottado@gmail.com', '$2y$10$JaaMJLdXYaRJQW/b0POjGuL/svWpup33MuyUEtv.RGKwpuV3Lkw3i', '2025-02-06 08:05:00', 'uploads/mark_nathaniel_d._olpot_jr/profile/pxfuel.jpg'),
+(18, '3232', 'olpottad23o@gmail.com', '$2y$10$vFJhu4SJYSgUaY4XCpht9eDC9Bl3MM7vdHJQkvEe3eJ2IZIT0nPuu', '2025-02-06 08:34:15', NULL);
 
 --
 -- Indexes for dumped tables
@@ -131,13 +126,13 @@ ALTER TABLE `users`
 -- AUTO_INCREMENT for table `borrowers`
 --
 ALTER TABLE `borrowers`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=36;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=42;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=19;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
