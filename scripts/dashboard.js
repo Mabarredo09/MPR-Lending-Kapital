@@ -135,6 +135,16 @@ document.addEventListener("DOMContentLoaded", function () {
   const tableLoanBtn = document.getElementById("tblLoanBtn");
   const tableGroceryBtn = document.getElementById("tblGroceryBtn");
 
+  // Modals for Payment, Loan, and Grocery
+  const paymentModal = document.getElementById("paymentModal");
+  const loanModal = document.getElementById("loanModal");
+  const groceryModal = document.getElementById("groceryModal");
+  const closeModalButtons = document.querySelectorAll(".close-modal");
+  const today = new Date().toISOString().split("T")[0];
+
+  const customerType = document.getElementById("customerType");
+  let interestRate = document.getElementById("interestRate");
+
   tableAllBtn.addEventListener("click", function () {
     tableAddBtn.style.display = "none";
     tableAllBtn.classList.add("active");
@@ -166,4 +176,109 @@ document.addEventListener("DOMContentLoaded", function () {
     tablePaymentBtn.classList.remove("active");
     tableAllBtn.classList.remove("active");
   });
+
+  tableAddBtn.addEventListener("click", function () {
+    console.log("Add new item");
+    if (tableAddBtn.innerHTML === "Add New Payment") {
+      paymentModal.style.display = "block";
+    } else if (tableAddBtn.innerHTML === "Add New Loan") {
+      loanModal.style.display = "block";
+    } else if (tableAddBtn.innerHTML === "Add New Grocery") {
+      groceryModal.style.display = "block";
+    }
+  });
+
+  closeModalButtons.forEach((button) => {
+    button.addEventListener("click", function () {
+      console.log("Close modal");
+      const modalId = button.getAttribute("data-modal");
+      document.getElementById(modalId).style.display = "none";
+
+      // Clear all inputs except submit and clear buttons
+      const modalInputs = document.querySelectorAll(
+        `#${modalId} input:not([type="submit"]):not([type="reset"]):not([type="date"])`
+      );
+      modalInputs.forEach((input) => (input.value = ""));
+
+      // Reset select elements if any
+      const modalSelects = document.querySelectorAll(`#${modalId} select`);
+      modalSelects.forEach((select) => (select.selectedIndex = 0));
+    });
+  });
+
+  customerType.addEventListener("change", function () {
+    if (customerType.value === "Regular") {
+      interestRate.disabled = true;
+      interestRate.value = "7";
+    } else if (customerType.value === "VIP") {
+      interestRate.disabled = true;
+      interestRate.value = "5";
+    } else if (customerType.value === "Other") {
+      interestRate.value = "";
+      interestRate.placeholder = "Enter interest rate";
+      interestRate.disabled = false;
+    } else {
+      interestRate.value = "0";
+      interestRate.disabled = true;
+    }
+  });
+  // Move the interest rate validation outside the change event
+  interestRate.addEventListener("input", function () {
+    const value = parseFloat(this.value);
+    if (value > 100) {
+      this.value = 100;
+    } else if (value < 0) {
+      this.value = 0;
+    }
+  });
+
+  // Form validation
+  const loanForm = document.querySelector("#loanModal form");
+  loanForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    const value = parseFloat(interestRate.value);
+    if (value < 0 || value > 100) {
+      event.preventDefault();
+      Swal.fire({
+        icon: "error",
+        title: "Invalid Interest Rate",
+        text: "Interest rate must be between 0% and 100%",
+      });
+    } else {
+      Swal.fire({
+        icon: "warning",
+        title: "Are you sure you want to add this loan?",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, add it!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          Swal.fire({
+            icon: "success",
+            title: "Success!",
+            text: "Loan has been successfully added.",
+          }).then(() => {
+            // Submit the form programmatically
+            const formData = new FormData(loanForm);
+            fetch(loanForm.action, {
+              method: "POST",
+              body: formData,
+            }).then(() => {
+              // Clear form and close modal after successful submission
+              loanForm.reset();
+              document.getElementById("loanModal").style.display = "none";
+              // Reload the table to reflect the new data
+              location.reload();
+            });
+          });
+        }
+      });
+    }
+  });
+
+  // Set default date value to today
+  document.getElementById("paymentDate").value = today;
+  document.getElementById("loanDate").value = today;
+  document.getElementById("groceryDate").value = today;
 });

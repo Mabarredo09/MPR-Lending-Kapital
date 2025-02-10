@@ -322,6 +322,93 @@
             </form>
         </div>
     </div>
+
+    </div>
+    <!-- Payment Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="paymentModal">&times;</span>
+            <h2>Add New Payment</h2>
+            <form action="">
+                <div>
+                    <label for="paymentDate">Payment Date</label><br>
+                    <input type="date" id="paymentDate" name="paymentDate" class="input-text-modal" required>
+                </div>
+                <div>
+                    <label for="paymentAmount">Payment Amount</label><br>
+                    <input type="number" id="paymentAmount" name="paymentAmount" class="input-text-modal" required>
+                </div>
+                <div class="button-container">
+                    <input type="submit" value="Add Payment" class="confirmBtn">
+                </div>
+                <div class="button-container">
+                    <input type="reset" value="Clear" class="cancelBtn">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Loan Modal -->
+    <div id="loanModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="loanModal">&times;</span>
+            <h2>Add New Loan</h2>
+            <form action="#" method="post">
+                <div>
+                    <label for="customerType">Type of Customer</label><br>
+                    <select name="customerType" id="customerType" class="input-text-modal" required>
+                        <option value="" disabled selected>Select type of customer</option>
+                        <option value="Regular">Regular</option>
+                        <option value="VIP">VIP</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
+                    <label for="interestRate">Interest Rate</label><br>
+                    <input type="number" id="interestRate" name="interestRate" class="input-text-modal" required
+                        disabled max="100"
+                        oninput="this.value = this.value > 100 ? 100 : this.value < 0 ? 0 : this.value">
+                </div>
+                <div>
+                    <label for="loanDate">Loan Date</label><br>
+                    <input type="date" id="loanDate" name="loanDate" class="input-text-modal" required>
+                </div>
+                <div>
+                    <label for="loanAmount">Loan Amount</label><br>
+                    <input type="number" id="loanAmount" name="loanAmount" class="input-text-modal" required>
+                </div>
+                <div class="button-container">
+                    <input type="submit" value="Add Loan" class="">
+                </div>
+                <div class="button-container">
+                    <input type="reset" value="Clear" class="cancelBtn">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Grocery Modal -->
+    <div id="groceryModal" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" data-modal="groceryModal">&times;</span>
+            <h2>Add New Grocery</h2>
+            <form action="">
+                <div>
+                    <label for="groceryDate">Grocery Date</label><br>
+                    <input type="date" id="groceryDate" name="groceryDate" class="input-text-modal" required>
+                </div>
+                <div>
+                    <label for="groceryAmount">Grocery Amount</label><br>
+                    <input type="number" id="groceryAmount" name="groceryAmount" class="input-text-modal" required>
+                </div>
+                <div class="button-container">
+                    <input type="submit" value="Add Grocery" class="confirmBtn">
+                </div>
+                <div class="button-container">
+                    <input type="reset" value="Clear" class="cancelBtn">
+                </div>
+            </form>
+        </div>
     </div>
 
     <div class="table-container">
