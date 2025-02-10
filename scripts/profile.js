@@ -6,6 +6,7 @@ let inputs = document.querySelectorAll('.inputs');
 const zooming = new Zooming();
 const notificationIcon = document.querySelector('.notification-icon');
 const notificationDropdown = document.querySelector('.notification-dropdown');
+let dashboardHeader = document.querySelector(".dashboard-header-right-content");
 
 let profilePicturePreview = document.getElementById('profile-picture-preview');
 let profilePictureUpload = document.getElementById('profile-picture-upload');
@@ -78,4 +79,8 @@ editProfileButton.addEventListener('click', function() {
 saveProfileButton.addEventListener('click', function() {
     // Submit the form when saving profile
     document.getElementById('profile-form').submit();
+});
+
+dashboardHeader.addEventListener("click", function () {
+    window.location.href = "dashboard.php";
 });

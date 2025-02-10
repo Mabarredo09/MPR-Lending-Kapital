@@ -55,6 +55,12 @@ $db->close();
                     <img src="images/dashboard.png" alt="Dashboard Logo">
                 </div>
                 <div class="dashboard-header-right">
+                <div class="dashboard-header-right-content">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                            <path fill="currentColor" d="M3 13h8V3H3zm0 8h8v-6H3zm10 0h8V11h-8zm0-18v6h8V3z" />
+                        </svg>
+                        <p>Dashboard</p>
+                    </div>
                     <div class="notification">
                     <div class="notification-icon">
                         <svg  xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
@@ -95,10 +101,14 @@ $db->close();
 <div class="dashboard-content">
 
     <div class="dashboard-content-button">
-        <div class="search-container">
-            <input type="text" placeholder="Search" class="search-input">
-            <button class="search-btn">Search</button>
-        </div>
+       <div class="search-container">
+    
+       <input type="text" id="search-input" list="borrower-list" class="search-input" placeholder="Search Borrower">
+<datalist id="borrower-list"></datalist>
+    <button id="search-btn" class="search-btn">Search</button>
+    
+</div>
+
         <div class="button-container">
             <button class="add-btn" id="add-btn">Add</button>
             <button disabled class="edit-btn" id="edit-btn">Edit</button>
@@ -111,13 +121,13 @@ $db->close();
             <form action="submit.php" method="post" enctype="multipart/form-data">
             <div class="input-row">
                     <div>
-                    <label for="fName">First Name</label><br>
-                    <input type="text" id="fName" name="fName" placeholder="First Name" class="input-text" required disabled>
-                    </div>
+                    <label for="frist_name">First Name</label><br>
+                    <input type="text" id="first_name" name="first_name" class="input-text" placeholder="First Name" required disabled>                    
+                </div>
                     <div>
                     <label for="mName">Middle Name</label><br>
-                    <input type="text" id="mName" name="mName" placeholder="Middle Name" class="input-text" required disabled>
-                    </div>
+                    <input type="text" id="middle_name" name="middle_name" class="input-text" placeholder="Middle Name" required disabled>                    
+                </div>
                     <div>
                     <label for="email">Surname</label><br>
                     <input type="text" id="surname" name="surname" placeholder="Surname"  class="input-text" required disabled>
@@ -224,11 +234,10 @@ $db->close();
                         <input type="date" id="expiryDate" name="expiryDate" class="input-text" required disabled>
                     </div>
                     <div>
-                        <label for="photo">Upload photo of ID</label><br>
-                        <input type="file" accept="image/*" id="idPhoto" name="idPhoto"   class="img-input" disabled>
-                        <div id="idPhotoPreview"></div>
-
-                    </div>
+    <label for="idPhoto">ID Photo</label><br>
+    <input type="file" id="idPhoto" name="idPhoto" class="img-input" disabled>
+    <div id="idPhotoPreview"></div>
+</div>
 
                 </div>
 
@@ -261,30 +270,30 @@ $db->close();
             <h1>Employer Address</h1>
                 <div class="input-row">
                     <div>
-                    <label for="homeNo">Home Number</label><br>
-                    <input type="text" id="homeNo" name="homeNo" placeholder="Home No." class="input-text" required disabled>
+                    <label for="employer_home_no">Home Number</label><br>
+                <input type="text" id="employer_home_no" name="employer_home_no" placeholder="Home No." class="input-text" required disabled>
                     </div>
                     <div>
-                    <label for="street">Street</label><br>
-                    <input type="text" id="street" name="street" placeholder="St." class="input-text" required disabled>
+                    <label for="employer_street">Street</label><br>
+                    <input type="text" id="employer_street" name="employer_street" placeholder="St." class="input-text" required disabled>
                     </div>
                     <div>
-                    <label for="baranggay">Baranggay</label><br>
-                    <input type="text" id="baranggay" name="baranggay" placeholder="Brgy." class="input-text" required disabled>
+                    <label for="employer_baranggay">Baranggay</label><br>
+                    <input type="text" id="employer_baranggay" name="employer_baranggay" placeholder="Brgy." class="input-text" required disabled>
                     </div>
                     <div>
-                    <label for="city">City</label><br>
-                    <input type="text" id="city" name="city" placeholder="City" class="input-text" required disabled>
+                    <label for="employer_city">City</label><br>
+                    <input type="text" id="employer_city" name="employer_city" placeholder="City" class="input-text" required disabled>
                     </div>
                 </div>
                 <div class="input-row-few">
                     <div>
-                    <label for="province">Province</label><br>
-                    <input type="text" id="province" name="province" placeholder="Province" class="input-text" required disabled>
+                    <label for="employer_province">Province</label><br>
+                    <input type="text" id="employer_province" name="employer_province" placeholder="Province" class="input-text" required disabled>
                     </div>
                     <div>
-                    <label for="region">Region</label><br>
-                    <input type="text" id="region" name="region" placeholder="Region" class="input-text" required disabled>
+                    <label for="employer_region">Region</label><br>
+                    <input type="text" id="employer_region" name="employer_region" placeholder="Region" class="input-text" required disabled>
                     </div>
                 </div>
 
@@ -306,14 +315,14 @@ $db->close();
                     </div>
                     <div>
                         <label for="expiryDate">Expiry Date</label><br>
-                        <input type="date" id="expiryDate" name="expiryDate" class="input-text" disabled>
+                        <input type="date" id="insuranceExpiryDate" name="insuranceExpiryDate" class="input-text" disabled>
+                       
                     </div>
                     <div>
-                    <label for="insurancePhoto">Upload Insurance</label><br>
-<input type="file" id="insurancePhoto" name="uploadInsurance" class="img-input" disabled>
-<div id="insurancePhotoPreview"></div>
-                    </div>
-
+    <label for="insurancePhoto">Insurance Photo</label><br>
+    <input type="file" id="insurancePhoto" name="insurancePhoto" class="img-input" disabled>
+    <div id="insurancePhotoPreview"></div>
+</div>
                 </div> 
                 <div class="input-row-few">
         <div>
@@ -327,11 +336,11 @@ $db->close();
     </div>
     <h1>Collateral</h1>
     <div class="input-row">
-        <div>
-            <label for="collateral">Upload Pictures of Collateral</label><br>
-            <input type="file" name="collateral[]" class="img-input" id="collateral" multiple disabled>
-            <div id="collateral-preview"></div> 
-        </div>
+    <div>
+    <label for="collateralPhoto">Collateral Photo</label><br>
+    <input type="file" id="collateralPhoto" name="collateralPhoto" class="img-input" disabled>
+    <div id="collateralPhotoPreview"></div>
+</div>
     </div>
             <div class="button-container">
             <input type="submit" value="Confirm" class="confirmBtn">

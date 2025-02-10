@@ -38,10 +38,13 @@ if (isset($_POST['update_details'])) {
         $stmt = $db->prepare($sql);
         $stmt->bind_param("ssi", $fullname, $email, $user_id);
     }
-
-    // Execute the query for personal info
+    
+    // Execute the SQL query
     if ($stmt->execute()) {
-        $_SESSION['message'] = "Profile updated successfully!";
+        echo "<script>
+        alert('Profile updated successfully!');
+        window.location.href = 'profile.php';
+        </script>";
     } else {
         $_SESSION['message'] = "Error updating profile: " . $stmt->error;
     }
@@ -85,7 +88,9 @@ if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ===
 
 $db->close();
 
-// Redirect back to profile page with message
-header("Location: profile.php?message=" . urlencode($_SESSION['message']));
+// Redirect to the profile page
+
+header("Location: profile.php");
 exit;
+?>
 ?>

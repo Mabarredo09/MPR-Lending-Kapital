@@ -8,8 +8,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Capture and escape form data to prevent SQL injection
-    $fName = mysqli_real_escape_string($conn, $_POST['fName']);
-    $mName = mysqli_real_escape_string($conn, $_POST['mName']);
+    $fName = mysqli_real_escape_string($conn, $_POST['first_name']);
+    $mName = mysqli_real_escape_string($conn, $_POST['middle_name']);
     $surname = mysqli_real_escape_string($conn, $_POST['surname']);
     $suffix = mysqli_real_escape_string($conn, $_POST['suffix']);
     $sex = mysqli_real_escape_string($conn, $_POST['sex']);

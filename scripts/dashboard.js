@@ -5,7 +5,7 @@ let editbtn = document.getElementById('edit-btn');
 let deletebtn = document.getElementById('delete-btn');
 let inputText = document.querySelectorAll('.input-text');
 let confirmBtn = document.querySelector('.confirmBtn');
-let collateralInput = document.getElementById('collateral');
+let collateralInput = document.getElementById('collateralPhoto');
 let collateralPreview = document.getElementById('collateral-preview');
 let radioBtn = document.querySelectorAll('.input-radio');
 let idPhotoInput = document.getElementById('idPhoto');
@@ -165,4 +165,167 @@ tableGroceryBtn.addEventListener('click', function() {
 });
 
 });
+document.getElementById('search-input').addEventListener('input', function () {
+    let searchValue = this.value.trim();
+    let dataList = document.getElementById('borrower-list');
+
+    if (searchValue === "") {
+        dataList.innerHTML = "";
+        return;
+    }
+
+    fetch(`search.php?name=${encodeURIComponent(searchValue)}`)
+        .then(response => response.json())
+        .then(data => {
+            dataList.innerHTML = ""; // Clear previous results
+
+            if (data.success && data.borrowers.length > 0) {
+                data.borrowers.forEach(borrower => {
+                    let option = document.createElement('option');
+                    option.value = `${borrower.first_name} ${borrower.middle_name || ''} ${borrower.surname}`;
+                    option.dataset.id = borrower.id;
+                    dataList.appendChild(option);
+                });
+            }
+        })
+        .catch(error => console.error('Error:', error));
+});
+
+
+
+// Auto-fill form when borrower is selected
+document.getElementById('search-input').addEventListener('change', function () {
+    let selectedValue = this.value.trim();
+    let selectedOption = Array.from(document.getElementById('borrower-list').options).find(opt => opt.value === selectedValue);
+
+    const zooming = new Zooming();
+
+    if (!selectedOption) return;
+
+    let borrowerId = selectedOption.dataset.id;
+
+    fetch(`get_borrower.php?id=${borrowerId}`)
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                const fields = {
+                    first_name: 'first_name',
+                    middle_name: 'middle_name',
+                    surname: 'surname',
+                    suffix: 'suffix',
+                    sex: 'sex',
+                    dob: 'DOB',
+                    marital_status: 'maritalStatus',
+                    contact_number: 'contactNo',
+                    home_no: 'homeNo',
+                    street: 'street',
+                    baranggay: 'baranggay',
+                    city: 'city',
+                    province: 'province',
+                    region: 'region',
+                    idPhoto: 'id_photo',
+                    id_type: 'idType',
+                    id_no: 'idNo',
+                    expiry_date: 'expiryDate',
+
+                    // Employer details
+                    employer_name: 'employerName',
+                    years_with_employer: 'noOfYearsWorked',
+                    position: 'position',
+                    phone_no_employer: 'phoneNoEmployer',
+                    salary: 'salary',
+
+                    // Employer address
+                    employer_home_no: 'employer_home_no',
+                    employer_street: 'employer_street',
+                    employer_baranggay: 'employer_baranggay',
+                    employer_city: 'employer_city',
+                    employer_province: 'employer_province',
+                    employer_region: 'employer_region',
+
+                    // Insurance details
+                    insurancePhoto: 'insurance_file',
+                    insurance_type: 'insuranceType',
+                    insurance_issued_date: 'issuedDate',
+                    insurance_expiry_date: 'insuranceExpiryDate',
+
+                    // Dependent details
+                    dependent_name: 'dependentName',
+                    dependent_contact_no: 'dependentContactNo',
+
+                    // Collateral details
+                    collateralPhoto: 'collateral_files'
+                };
+            
+                console.log(data);
+                // Populate text fields
+                Object.keys(fields).forEach(key => {
+                    const element = document.getElementById(fields[key]);
+                    if (element) {
+                        element.value = data[key] || '';
+                    }
+                });
+
+                // Handle sex radio buttons
+                if (data.sex) {
+                    document.querySelectorAll('input[name="sex"]').forEach(radio => {
+                        radio.checked = radio.value === data.sex;
+                    });
+                }
+
+               // Handle image previews
+                if (data.id_photo) {
+                    console.log(data.id_photo);
+                    const idPreviewContainer = document.getElementById('idPhotoPreview');
+                    idPreviewContainer.innerHTML = '';
+                    const idImg = document.createElement('img');
+                    idImg.src = data.id_photo;
+                    idImg.style.maxWidth = '200px';
+                    idImg.style.margin = '10px';
+                    idImg.classList.add('zoomable');
+                    idPreviewContainer.appendChild(idImg);
+                    zooming.listen(idImg);
+                }
+
+                if (data.insurance_file) {
+                    console.log(data.insurance_file);
+                    const insurancePreviewContainer = document.getElementById('insurancePhotoPreview');
+                    insurancePreviewContainer.innerHTML = '';
+                    const insuranceImg = document.createElement('img');
+                    insuranceImg.src = data.insurance_file;
+                    insuranceImg.style.maxWidth = '200px';
+                    insuranceImg.style.margin = '10px';
+                    insuranceImg.classList.add('zoomable');
+                    insurancePreviewContainer.appendChild(insuranceImg);
+                    zooming.listen(insuranceImg);
+                }
+
+                if (data.collateral_files) {
+                    
+                    const collateralPreviewContainer = document.getElementById('collateral-preview');
+                    // collateralPreviewContainer.innerHTML = ''; // Clear previous preview
+                    // Handle multiple collateral images if they're in an array
+                    const collateralFiles = Array.isArray(data.collateralPhoto) 
+                        ? data.collateralPhoto 
+                        : [data.collateralPhoto];
+                    console.log(collateralFiles);
+                    collateralFiles.forEach(file => {
+                        const collateralImg = document.createElement('img');
+                        collateralImg.src = file;
+                        collateralImg.style.maxWidth = '200px';
+                        collateralImg.style.margin = '10px';
+                        collateralImg.classList.add('zoomable');
+                        collateralPreviewContainer.appendChild(collateralImg);
+                        zooming.listen(collateralImg);
+                    });
+                }
+
+            } else {
+                alert("Borrower not found!");
+            }
+        })
+        .catch(error => console.error('Error:', error));
+});
+
+
 
