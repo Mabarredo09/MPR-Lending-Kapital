@@ -491,7 +491,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     // Populate Insurance Details
     document.getElementById("insuranceType").value = user.insurance_type || "";
-    document.getElementById("issuedDate").value = user.insurance_expiry_date;
+    document.getElementById("issuedDate").value = user.issued_date;
     document.getElementById("expiryDateInsurance").value =
       user.insurance_expiry_date;
     if (user.insurance_file) {
