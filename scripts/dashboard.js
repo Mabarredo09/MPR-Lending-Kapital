@@ -4,6 +4,7 @@ document.addEventListener("DOMContentLoaded", function () {
   let deletebtn = document.getElementById("delete-btn");
   let inputText = document.querySelectorAll(".input-text");
   let confirmBtn = document.querySelector(".confirmBtn");
+  let updateBtn = document.querySelector(".updateBtn");
   let collateralInput = document.getElementById("collateral");
   let collateralPreview = document.getElementById("collateral-preview");
   let radioBtn = document.querySelectorAll(".input-radio");
@@ -177,7 +178,6 @@ document.addEventListener("DOMContentLoaded", function () {
     };
     reader.readAsDataURL(file);
   });
-  idPhotoPreview.addEventListener("click", function () {});
 
   insurancePhotoInput.addEventListener("change", function () {
     insurancePhotoPreview.innerHTML = "";
@@ -465,7 +465,7 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("expiryDate").value = user.expiry_date;
     if (user.id_photo) {
       const idPhotoPreview = document.getElementById("idPhotoPreview");
-      idPhotoPreview.innerHTML = `<img src="images/uploads/ ${user.id_photo}" style="max-width: 200px; margin: 10px;" class="zoomable">`;
+      idPhotoPreview.innerHTML = `<img src="images/uploads/${user.id_photo}" style="max-width: 200px; margin: 10px;" class="zoomable">`;
       const zoomable = idPhotoPreview.querySelector(".zoomable");
       if (zoomable) {
         zooming.listen(zoomable);
@@ -498,7 +498,7 @@ document.addEventListener("DOMContentLoaded", function () {
         "insurancePhotoPreview"
       );
       insurancePhotoPreview.innerHTML = `<img src="images/uploads/${user.insurance_file}" style="max-width: 200px; margin: 10px;" class="zoomable">`;
-      const zoomable = idPhotoPreview.querySelector(".zoomable");
+      const zoomable = insurancePhotoPreview.querySelector(".zoomable");
       if (zoomable) {
         zooming.listen(zoomable);
       }
@@ -569,6 +569,9 @@ document.addEventListener("DOMContentLoaded", function () {
       insurance_expiry_date: user.insurance_expiry_date,
       dependent_name: user.dependent_name,
       dependent_contact_no: user.dependent_contact_no,
+      collateral_files: user.collateral_files,
+      id_photo: user.id_photo,
+      insurance_file: user.insurance_file,
     };
     // Remove any existing event listeners from the edit button
     editbtn.removeEventListener("click", handleEditClick);
@@ -597,6 +600,7 @@ document.addEventListener("DOMContentLoaded", function () {
       addbtn.style = "cursor:pointer; background-color: #ccc; color: white;";
       deletebtn.disabled = true;
       deletebtn.style = "cursor:pointer; background-color: #ccc; color: white;";
+      updateBtn.style.display = "block";
     } else if (editbtn.innerHTML === "Cancel") {
       // Restore all original values
       Object.keys(originalValues).forEach((key) => {
@@ -640,6 +644,25 @@ document.addEventListener("DOMContentLoaded", function () {
         if (zoomable) zooming.listen(zoomable);
       }
 
+      if (originalValues.collateral_files) {
+        const collateralPreview = document.getElementById("collateral-preview");
+        collateralPreview.innerHTML = ""; // Clear previous previews
+
+        // Split the comma-separated string of file paths
+        const collateralFiles = originalValues.collateral_files.split(",");
+        // Create image elements for each collateral file
+        collateralFiles.forEach((filePath) => {
+          const img = document.createElement("img");
+          img.src = "images/uploads/" + filePath;
+          img.style.maxWidth = "200px";
+          img.style.margin = "10px";
+          img.classList.add("zoomable");
+          collateralPreview.appendChild(img);
+          zooming.listen(img);
+        });
+      }
+
+      console.log(originalValues);
       // Disable all inputs
       const inputs = document.querySelectorAll(
         ".input-text, .input-radio, .img-input, select"
@@ -655,8 +678,118 @@ document.addEventListener("DOMContentLoaded", function () {
       deletebtn.disabled = false;
       deletebtn.style =
         "cursor:pointer; background-color: #f44336; color: white;";
+      updateBtn.style.display = "none";
     }
   }
+  // Update the updateBtn click handler:
+
+  updateBtn.addEventListener("click", function (e) {
+    e.preventDefault();
+
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You want to update this borrower's information?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, update it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const formData = new FormData(borrowerForm);
+
+        // Add existing file paths and ID
+        formData.append("id", originalValues.id);
+        formData.append("existing_id_photo", originalValues.id_photo || "");
+        formData.append(
+          "existing_insurance_file",
+          originalValues.insurance_file || ""
+        );
+        formData.append(
+          "existing_collateral_files",
+          originalValues.collateral_files || ""
+        );
+
+        // Add new files if selected
+        const idPhotoInput = document.getElementById("idPhoto");
+        const insurancePhotoInput = document.getElementById("insurancePhoto");
+        const collateralInput = document.getElementById("collateral");
+
+        if (idPhotoInput.files[0]) {
+          formData.append("idPhoto", idPhotoInput.files[0]);
+        }
+
+        if (insurancePhotoInput.files[0]) {
+          formData.append("insurancePhoto", insurancePhotoInput.files[0]);
+        }
+
+        if (collateralInput.files.length > 0) {
+          for (let i = 0; i < collateralInput.files.length; i++) {
+            formData.append("collateral[]", collateralInput.files[i]);
+          }
+        }
+
+        fetch("scripts/AJAX/edit_borrower.php", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => {
+            if (!response.ok) {
+              throw new Error("Network response was not ok");
+            }
+            return response.json();
+          })
+          .then((data) => {
+            if (data.status === "success") {
+              Swal.fire({
+                icon: "success",
+                title: "Updated!",
+                text: "Borrower information has been updated successfully.",
+                timer: 3000,
+              }).then(() => {
+                // Update originalValues with new data
+                if (idPhotoInput.files[0]) {
+                  originalValues.id_photo = data.id_photo;
+                }
+                if (insurancePhotoInput.files[0]) {
+                  originalValues.insurance_file = data.insurance_file;
+                }
+                if (collateralInput.files.length > 0) {
+                  originalValues.collateral_files = data.collateral_files;
+                }
+
+                // Disable inputs and reset buttons
+                const inputs = document.querySelectorAll(
+                  ".input-text, .input-radio, .img-input, select"
+                );
+                inputs.forEach((input) => (input.disabled = true));
+
+                editbtn.innerHTML = "Edit";
+                editbtn.style =
+                  "cursor:pointer; background-color: #4CAF50; color: white;";
+                addbtn.disabled = false;
+                addbtn.style =
+                  "cursor:pointer; background-color: #1E3E62; color: white;";
+                deletebtn.disabled = false;
+                deletebtn.style =
+                  "cursor:pointer; background-color: #f44336; color: white;";
+                updateBtn.style.display = "none";
+              });
+            } else {
+              throw new Error(data.message || "Update failed");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            Swal.fire({
+              icon: "error",
+              title: "Error!",
+              text: "An error occurred while updating the borrower information.",
+            });
+          });
+      }
+    });
+  });
 
   // Add debounce to search
   function debounce(func, wait) {

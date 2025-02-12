@@ -270,6 +270,16 @@ input[type=number] {
     cursor: pointer;
 }
 
+.updateBtn {
+    display: none;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 40px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
 .add-btn {
     background-color: #1E3E62;
     font-weight: 700;

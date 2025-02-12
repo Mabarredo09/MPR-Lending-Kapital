@@ -117,7 +117,7 @@
                 <div class="input-row">
                     <div>
                         <label for="sex">Sex</label><br>
-                        <input type="radio" id="male" name="sex" value="male" class="input-radio" disabled>
+                        <input type="radio" id="male" name="sex" value="male" class="input-radio" disabled required>
                         <label for="male">Male</label>
                         <input type="radio" id="female" name="sex" value="female" class="input-radio" disabled>
                         <label for="female">Female</label>
@@ -324,6 +324,9 @@
                 </div>
                 <div class="button-container">
                     <input type="submit" value="Confirm" class="confirmBtn">
+                </div>
+                <div class="button-container">
+                    <button class="updateBtn">Update</button>
                 </div>
             </form>
         </div>
