@@ -143,6 +143,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 document.getElementById("add-btn").innerHTML = "Add";
                 document.getElementById("edit-btn").disabled = true;
                 document.getElementById("delete-btn").disabled = true;
+                confirmBtn.style.display = "none";
 
                 exit();
               });
