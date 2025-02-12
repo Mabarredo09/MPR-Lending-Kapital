@@ -2,8 +2,8 @@
 session_start();
 
 if (isset($_POST['signup'])) {
-    $fname = $_POST['fullname'];
-    $email = $_POST['email'];
+    $fname = trim($_POST['fullname']);
+    $email = trim($_POST['email']);
     $password = $_POST['password'];
     $confpass = $_POST['confirm_password'];
 
@@ -15,118 +15,58 @@ if (isset($_POST['signup'])) {
         die("Connection failed: " . $db->connect_error);
     }
 
-    // Check if password and confirm password match
+    // Validate inputs
     if ($password !== $confpass) {
-        echo "<script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    swal({
-                        title: 'Error',
-                        text: 'Passwords do not match.',
-                        icon: 'error',
-                        button: 'OK',
-                        }).then(function() {
-                        window.location.href = window.location.href;
-                    });
-                });
-              </script>";
-    } 
-    // Check if password is at least 6 characters long
-    elseif (strlen($password) < 6) {
-        echo "<script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    swal({
-                        title: 'Error',
-                        text: 'Password must be at least 6 characters long.',
-                        icon: 'error',
-                        button: 'OK',
-                        }).then(function() {
-                        window.location.href = window.location.href;
-                    });
-                });
-              </script>";
-    } 
-    // Check if fullname is blank
-    elseif ($fname == "") {
-        echo "<script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    swal({
-                        title: 'Error',
-                        text: 'Fullname cannot be blank.',
-                        icon: 'error',
-                        button: 'OK',
-                        }).then(function() {
-                        window.location.href = window.location.href;
-                    });
-                });
-              </script>";
-    } 
-    // Check if email is already in use
-    elseif (emailExists($db, $email)) {
-        echo "<script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    swal({
-                        title: 'Error',
-                        text: 'Email is already in use. Please use a different email.',
-                        icon: 'error',
-                        button: 'OK',
-                    }).then(function() {
-                        window.location.href = window.location.href;
-                    });
-                });
-              </script>";
-    } 
-    else {
+        showAlert("Error", "Passwords do not match.", "error");
+    } elseif (strlen($password) < 6) {
+        showAlert("Error", "Password must be at least 6 characters long.", "error");
+    } elseif (empty($fname)) {
+        showAlert("Error", "Fullname cannot be blank.", "error");
+    } elseif (emailExists($db, $email)) {
+        showAlert("Error", "Email is already in use. Please use a different email.", "error");
+    } else {
         // Hash the password
         $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
 
         // Handle profile picture upload
         $profilePicture = null;
         if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] == 0) {
-            // Set upload directory and file name
-            $targetDir = "uploads/" . strtolower(str_replace(" ", "_", $fname)) . "/profile/"; // User-specific folder
-            $targetFile = $targetDir . basename($_FILES["profile_picture"]["name"]);
-            $imageFileType = strtolower(pathinfo($targetFile, PATHINFO_EXTENSION));
+            // Format user folder name (remove special characters and spaces)
+            $safeName = preg_replace("/[^a-zA-Z0-9]/", "_", strtolower($fname));
+            $targetDir = "uploads/users/{$safeName}/profile/"; // User-specific folder
             
-            // Create user folder if it doesn't exist
+            // Ensure directory exists
             if (!file_exists($targetDir)) {
                 mkdir($targetDir, 0777, true);
             }
-            
-            // Check if the file is an image
-            if (getimagesize($_FILES["profile_picture"]["tmp_name"]) !== false) {
-                // Move the uploaded file to the server directory
-                if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $targetFile)) {
-                    $profilePicture = $targetFile; // Store the image path
-                } else {
-                    echo "<script>alert('Sorry, there was an error uploading your file.')</script>";
-                }
+
+            // Get file extension
+            $imageFileType = strtolower(pathinfo($_FILES["profile_picture"]["name"], PATHINFO_EXTENSION));
+            $targetFile = $targetDir . "profile." . $imageFileType; // Rename to `profile.jpg/png`
+
+            // Validate file type (Only allow images)
+            $validExtensions = ['jpg', 'jpeg', 'png', 'gif'];
+            if (!in_array($imageFileType, $validExtensions)) {
+                showAlert("Error", "Only JPG, JPEG, PNG & GIF files are allowed.", "error");
+            }
+
+            // Move the uploaded file
+            if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $targetFile)) {
+                $profilePicture = $targetFile;
             } else {
-                echo "<script>alert('File is not an image.')</script>";
+                showAlert("Error", "Sorry, there was an error uploading your file.", "error");
             }
         }
 
-        // Insert user into the database, including profile picture
+        // Insert user into the database
         $sql = "INSERT INTO users (fullname, email, password, profile_picture) VALUES (?, ?, ?, ?)";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("ssss", $fname, $email, $hashedPassword, $profilePicture);
 
         if ($stmt->execute()) {
-            // SweetAlert for successful sign-up
-            echo "<script src='https://unpkg.com/sweetalert/dist/sweetalert.min.js'></script>";
-            echo "<script>
-                  document.addEventListener('DOMContentLoaded', function() {
-                    swal({
-                      title: 'Sign-up successful!',
-                      text: 'Redirecting to login page.',
-                      icon: 'success',
-                      button: 'OK',
-                    }).then(function() {
-                      window.location.href = 'index.php';
-                    });
-                  });
-                  </script>";
+            showAlert("Success", "Sign-up successful! Redirecting to login page.", "success", "index.php");
         } else {
-            echo "<script>alert('Error: Unable to sign up. Please try again.')</script>";
+            showAlert("Error", "Error: Unable to sign up. Please try again.", "error");
         }
 
         $stmt->close();
@@ -142,12 +82,29 @@ function emailExists($db, $email) {
     $stmt->bind_param("s", $email);
     $stmt->execute();
     $result = $stmt->get_result();
-
     $exists = $result->num_rows > 0;
-
     $stmt->close();
     return $exists;
 }
+
+// Function to show SweetAlert messages
+function showAlert($title, $message, $icon, $redirect = null) {
+    echo "<script src='https://unpkg.com/sweetalert/dist/sweetalert.min.js'></script>";
+    echo "<script>
+            document.addEventListener('DOMContentLoaded', function() {
+                swal({
+                    title: '{$title}',
+                    text: '{$message}',
+                    icon: '{$icon}',
+                    button: 'OK',
+                }).then(function() {
+                    window.location.href = '{$redirect}';
+                });
+            });
+          </script>";
+    exit();
+}
+
 ?>
 
 <!DOCTYPE html>

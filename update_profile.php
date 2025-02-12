@@ -9,18 +9,24 @@ if ($db->connect_error) {
     die("Connection failed: " . $db->connect_error);
 }
 
-// Get the logged-in user's ID
-$user_id = $_SESSION['user_id'];
+// Ensure user is logged in
+if (!isset($_SESSION['user_id']) || !isset($_SESSION['fullname'])) {
+    $_SESSION['message'] = "Unauthorized access!";
+    header("Location: login.php");
+    exit;
+}
 
-// Handle Profile Update (for personal info and profile picture)
+$user_id = $_SESSION['user_id'];
+$fullname = $_SESSION['fullname']; // Fetch full name from session
+
+// Handle Profile Update (Name, Email, Password)
 if (isset($_POST['update_details'])) {
-    // Get the form data
     $fullname = htmlspecialchars(trim($_POST['fullname']));
     $email = filter_var(trim($_POST['email']), FILTER_SANITIZE_EMAIL);
     $password = $_POST['password'];
     $confirm_password = $_POST['confirm_password'];
-    
-    // Process the password if it's entered
+
+    // Process password update if entered
     if (!empty($password)) {
         if ($password === $confirm_password) {
             $hashedPassword = password_hash($password, PASSWORD_DEFAULT);
@@ -33,40 +39,38 @@ if (isset($_POST['update_details'])) {
             exit;
         }
     } else {
-        // If no password is provided, don't update the password field
+        // Update only name and email if password is not entered
         $sql = "UPDATE users SET fullname = ?, email = ? WHERE id = ?";
         $stmt = $db->prepare($sql);
         $stmt->bind_param("ssi", $fullname, $email, $user_id);
     }
-    
-    // Execute the SQL query
+
     if ($stmt->execute()) {
-        echo "<script>
-        alert('Profile updated successfully!');
-        window.location.href = 'profile.php';
-        </script>";
+        $_SESSION['fullname'] = $fullname; // Update session with new name
+        echo "<script>alert('Profile updated successfully!'); window.location.href = 'profile.php';</script>";
     } else {
         $_SESSION['message'] = "Error updating profile: " . $stmt->error;
     }
     $stmt->close();
 }
 
-// Handle Profile Picture Update
+// Handle Profile Picture Upload
 if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] === UPLOAD_ERR_OK) {
-    // Set the target directory for the user's profile pictures
-    $targetDir = "uploads/" . strtolower(str_replace(" ", "_", $_SESSION['fullname'])) . "/profile/";
-    // Create the user's folder if it doesn't exist
+    // Format folder name: users/{name}/profile/
+    $safeName = preg_replace("/[^a-zA-Z0-9]/", "_", strtolower($fullname));
+    $targetDir = "uploads/users/{$safeName}/profile/";
+
+    // Create directory if it doesn't exist
     if (!file_exists($targetDir)) {
         mkdir($targetDir, 0777, true);
     }
-    
-    // Get file details
+
+    // Process file upload
     $fileName = basename($_FILES["profile_picture"]["name"]);
     $targetFilePath = $targetDir . $fileName;
     $fileType = mime_content_type($_FILES['profile_picture']['tmp_name']);
     $allowedTypes = ['image/jpeg', 'image/png', 'image/gif'];
-    
-    // Validate file type
+
     if (in_array($fileType, $allowedTypes)) {
         if (move_uploaded_file($_FILES["profile_picture"]["tmp_name"], $targetFilePath)) {
             $sql = "UPDATE users SET profile_picture = ? WHERE id = ?";
@@ -88,9 +92,7 @@ if (isset($_FILES['profile_picture']) && $_FILES['profile_picture']['error'] ===
 
 $db->close();
 
-// Redirect to the profile page
-
+// Redirect to profile page
 header("Location: profile.php");
 exit;
-?>
 ?>

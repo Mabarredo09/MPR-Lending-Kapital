@@ -48,20 +48,20 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $dependentName = mysqli_real_escape_string($conn, $_POST['dependentName']);
     $dependentContactNo = mysqli_real_escape_string($conn, $_POST['dependentContactNo']);
 
-    // Format customer name for folder naming (sanitize to avoid invalid characters)
-    $customerFolder = preg_replace("/[^a-zA-Z0-9]/", "_", $fName . "_" . $surname);
-    $customerDir = "uploads/$customerFolder/";
+    // Format borrower name for folder naming (sanitize to avoid invalid characters)
+    $borrowerFolder = preg_replace("/[^a-zA-Z0-9]/", "_", $fName . "_" . $surname);
+    $borrowerDir = "uploads/borrowers/$borrowerFolder/";
 
-    // Create customer folder if it doesn't exist
-    if (!file_exists($customerDir)) {
-        mkdir($customerDir, 0777, true);
+    // Create borrower folder if it doesn't exist
+    if (!file_exists($borrowerDir)) {
+        mkdir($borrowerDir, 0777, true);
     }
 
     // Function to handle file uploads
-    function uploadFile($file, $prefix, $customerDir) {
+    function uploadFile($file, $prefix, $borrowerDir) {
         if ($file['error'] === UPLOAD_ERR_OK) {
             $fileName = $prefix . "_" . basename($file['name']); // Append prefix to file name
-            $filePath = $customerDir . $fileName;
+            $filePath = $borrowerDir . $fileName;
             move_uploaded_file($file['tmp_name'], $filePath);
             return $filePath; // Return the saved file path
         }
@@ -69,34 +69,40 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Handle ID photo upload
-    $idPhotoPath = isset($_FILES['idPhoto']) ? uploadFile($_FILES['idPhoto'], "ID", $customerDir) : "";
+    $idPhotoPath = isset($_FILES['idPhoto']) ? uploadFile($_FILES['idPhoto'], "ID", $borrowerDir) : "";
 
     // Handle insurance file upload
-    $insuranceFilePath = isset($_FILES['uploadInsurance']) ? uploadFile($_FILES['uploadInsurance'], "Insurance", $customerDir) : "";
-
+    $insuranceFilePath = "";
+    if (isset($_FILES['insurancePhoto']) && $_FILES['insurancePhoto']['error'] === UPLOAD_ERR_OK) {
+        $insuranceFilePath = uploadFile($_FILES['insurancePhoto'], "insurancePhoto", $borrowerDir);
+    }
+    
     // Handle collateral file uploads (multiple files)
     $collateralFiles = [];
-    if (isset($_FILES['collateral'])) {
-        foreach ($_FILES['collateral']['name'] as $key => $filename) {
-            $collateralFile = [
-                'name' => $filename,
-                'tmp_name' => $_FILES['collateral']['tmp_name'][$key],
-                'error' => $_FILES['collateral']['error'][$key]
-            ];
-            $collateralFilePath = uploadFile($collateralFile, "Collateral_" . ($key + 1), $customerDir);
-            if ($collateralFilePath) {
-                $collateralFiles[] = $collateralFilePath;
+    if (isset($_FILES['collateralPhoto']) && is_array($_FILES['collateralPhoto']['name']) && count($_FILES['collateralPhoto']['name']) > 0) {
+        foreach ($_FILES['collateralPhoto']['name'] as $key => $filename) {
+            if ($_FILES['collateralPhoto']['error'][$key] === UPLOAD_ERR_OK) {
+                $collateralFile = [
+                    'name' => $filename,
+                    'tmp_name' => $_FILES['collateralPhoto']['tmp_name'][$key],
+                    'error' => $_FILES['collateralPhoto']['error'][$key]
+                ];
+                $collateralFilePath = uploadFile($collateralFile, "collateralPhoto_" . ($key + 1), $borrowerDir);
+                if ($collateralFilePath) {
+                    $collateralFiles[] = $collateralFilePath;
+                }
             }
         }
     }
+    $collateralFilesString = !empty($collateralFiles) ? implode(',', $collateralFiles) : null;
 
     // Insert data into the database
     $sql = "INSERT INTO borrowers (first_name, middle_name, surname, suffix, sex, dob, marital_status, contact_number, home_no, street, baranggay, city, province, region, id_type, id_no, expiry_date, id_photo, employer_name, years_with_employer, position, phone_no_employer, salary, employer_home_no, employer_street, employer_baranggay, employer_city, employer_province, employer_region, insurance_type, insurance_issued_date, insurance_expiry_date, insurance_file, dependent_name, dependent_contact_no, collateral_files)
-            VALUES ('$fName', '$mName', '$surname', '$suffix', '$sex', '$DOB', '$maritalStatus', '$contactNo', '$homeNo', '$street', '$baranggay', '$city', '$province', '$region', '$idType', '$idNo', '$expiryDate', '$idPhotoPath', '$employerName', '$noOfYearsWorked', '$position', '$phoneNoEmployer', '$salary', '$employerHomeNo', '$employerStreet', '$employerBaranggay', '$employerCity', '$employerProvince', '$employerRegion', '$insuranceType', '$issuedDate', '$insuranceExpiryDate', '$insuranceFilePath', '$dependentName', '$dependentContactNo', '" . implode(',', $collateralFiles) . "')";
+            VALUES ('$fName', '$mName', '$surname', '$suffix', '$sex', '$DOB', '$maritalStatus', '$contactNo', '$homeNo', '$street', '$baranggay', '$city', '$province', '$region', '$idType', '$idNo', '$expiryDate', '$idPhotoPath', '$employerName', '$noOfYearsWorked', '$position', '$phoneNoEmployer', '$salary', '$employerHomeNo', '$employerStreet', '$employerBaranggay', '$employerCity', '$employerProvince', '$employerRegion', '$insuranceType', '$issuedDate', '$insuranceExpiryDate', '$insuranceFilePath', '$dependentName', '$dependentContactNo', '$collateralFilesString')";
 
     if ($conn->query($sql) === TRUE) {
         echo "<script type='text/javascript'>
-                if (confirm('New customer added successfully! Would you like to add another customer?')) {
+                if (confirm('New borrower added successfully! Would you like to add another borrower?')) {
                     window.location.href = 'dashboard.php';
                 } else {
                     window.location.href = 'dashboard.php';

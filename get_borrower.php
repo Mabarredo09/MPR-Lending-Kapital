@@ -31,6 +31,11 @@ if ($row = $result->fetch_assoc()) {
 } else {
     echo json_encode(["success" => false, "message" => "Borrower not found"]);
 }
+if ($row['collateral_files']) {
+    $collateralFiles = explode(',', $row['collateral_files']); // 🔹 Ensure array format
+    $row['collateral_files'] = array_map('trim', $collateralFiles); // Trim spaces
+}
+
 
 $stmt->close();
 $db->close();

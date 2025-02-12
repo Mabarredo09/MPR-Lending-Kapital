@@ -210,7 +210,7 @@ $db->close();
 
                     <div>
                     <label for="idType">Type of ID</label><br>
-                    <select name="idType" id="idType" class="input-text" disabled>
+                    <select name="idType" id="idType" placeholder="ID Type" class="input-text"  disabled>
                         <option value="SSS">SSS</option>
                         <option value="TIN">TIN</option>
                         <option value="PAGIBIG">PAGIBIG</option>
@@ -338,9 +338,9 @@ $db->close();
     <div class="input-row">
     <div>
     <label for="collateralPhoto">Collateral Photo</label><br>
-    <input type="file" id="collateralPhoto" name="collateralPhoto" class="img-input" disabled>
-    <div id="collateralPhotoPreview"></div>
-</div>
+    <input type="file" id="collateralPhoto" name="collateralPhoto[]" class="img-input" multiple disabled> 
+
+<div id="collateral-preview"></div></div>
     </div>
             <div class="button-container">
             <input type="submit" value="Confirm" class="confirmBtn">
