@@ -1,85 +1,3 @@
-<?php
-session_start();
-
-if (isset($_POST['login'])) {
-    $email = $_POST['email'];
-    $password = $_POST['password'];
-
-    // Database connection
-    $db = new mysqli('localhost', 'root', '', 'mprlendingdb');
-
-    // Check connection
-    if ($db->connect_error) {
-        echo "<script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    Swal.fire({
-                        title: 'Connection Failed',
-                        text: '" . $db->connect_error . "',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                });
-              </script>";
-        exit();
-    }
-
-    // Check if email exists
-    $sql = "SELECT * FROM users WHERE email = ?";
-    $stmt = $db->prepare($sql);
-    $stmt->bind_param("s", $email);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-        // Verify password
-        if (password_verify($password, $user['password'])) {
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['fullname'] = $user['fullname'];
-            echo "<script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            title: 'Login Successful',
-                            text: 'Redirecting to dashboard...',
-                            icon: 'success',
-                            confirmButtonText: 'OK'
-                        }).then(function() {
-                            window.location.href = 'dashboard.php';
-                        });
-                    });
-                  </script>";
-            // Redirect to dashboard
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            echo "<script>
-                    document.addEventListener('DOMContentLoaded', function() {
-                        Swal.fire({
-                            title: 'Error',
-                            text: 'Invalid email or password.',
-                            icon: 'error',
-                            confirmButtonText: 'OK'
-                        });
-                    });
-                  </script>";
-        }
-    } else {
-        echo "<script>
-                document.addEventListener('DOMContentLoaded', function() {
-                    Swal.fire({
-                        title: 'Error',
-                        text: 'Invalid email or password.',
-                        icon: 'error',
-                        confirmButtonText: 'OK'
-                    });
-                });
-              </script>";
-    }
-
-    $stmt->close();
-    $db->close();
-}
-?>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -107,7 +25,7 @@ if (isset($_POST['login'])) {
         </div>
         <div class="form-container">
             <h1>Log-in</h1>
-            <form action="" method="post" class="login-form">
+            <form action="" method="post" class="login-form" id="loginForm">
                 <label for="email" class="strong">Email</label>
                 <br>
                 <input type="email" name="email" id="email" placeholder="Please enter your email" required><br><br>
@@ -124,6 +42,47 @@ if (isset($_POST['login'])) {
         </div>
         </form>
     </div>
+    <script>
+
+        document.getElementById('loginForm').addEventListener('submit', function (e) {
+            e.preventDefault();
+            const formData = new FormData(this);
+            fetch('scripts/AJAX/login.php', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'success') {
+                        Swal.fire({
+                            title: 'Login Successful',
+                            text: 'Redirecting to dashboard...',
+                            icon: 'success',
+                            timer: 2000,
+                            confirmButtonText: 'OK'
+                        }).then(() => {
+                            // Redirect to dashboard page
+                            window.location.href = 'dashboard.php';
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: data.message,
+                            icon: 'error',
+                            confirmButtonText: 'OK'
+                        });
+                    }
+                })
+                .catch(error => {
+                    Swal.fire({
+                        title: 'Error',
+                        text: 'An error occurred. Please try again.',
+                        icon: 'error',
+                        confirmButtonText: 'OK'
+                    });
+                });
+        });
+    </script>
 </body>
 
 </html>

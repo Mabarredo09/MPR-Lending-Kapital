@@ -86,7 +86,7 @@
 
         <div class="form-container">
             <h1>Personal Information</h1>
-            <form action="#" method="post">
+            <form action="#" method="post" enctype="multipart/form-data">
                 <div class="input-row">
                     <div>
                         <label for="fName">First Name</label><br>
@@ -95,7 +95,7 @@
                     </div>
                     <div>
                         <label for="lName">Middle Name</label><br>
-                        <input type="text" id="lName" name="lName" placeholder="Middle Name" class="input-text" required
+                        <input type="text" id="mName" name="mName" placeholder="Middle Name" class="input-text" required
                             disabled>
                     </div>
                     <div>
@@ -245,29 +245,34 @@
                 <div class="input-row">
                     <div>
                         <label for="homeNo">Home Number</label><br>
-                        <input type="text" id="homeNo" name="homeNo" class="input-text" required disabled>
+                        <input type="text" id="EmployerhomeNo" name="EmployerhomeNo" class="input-text" required
+                            disabled>
                     </div>
                     <div>
                         <label for="street">Street</label><br>
-                        <input type="text" id="street" name="street" class="input-text" required disabled>
+                        <input type="text" id="Employerstreet" name="Employerstreet" class="input-text" required
+                            disabled>
                     </div>
                     <div>
                         <label for="baranggay">Baranggay</label><br>
-                        <input type="text" id="baranggay" name="baranggay" class="input-text" required disabled>
+                        <input type="text" id="Employerbaranggay" name="Employerbaranggay" class="input-text" required
+                            disabled>
                     </div>
                     <div>
                         <label for="city">City</label><br>
-                        <input type="text" id="city" name="city" class="input-text" required disabled>
+                        <input type="text" id="Employercity" name="Employercity" class="input-text" required disabled>
                     </div>
                 </div>
                 <div class="input-row-few">
                     <div>
                         <label for="province">Province</label><br>
-                        <input type="text" id="province" name="province" class="input-text" required disabled>
+                        <input type="text" id="Employerprovince" name="Employerprovince" class="input-text" required
+                            disabled>
                     </div>
                     <div>
                         <label for="region">Region</label><br>
-                        <input type="text" id="region" name="region" class="input-text" required disabled>
+                        <input type="text" id="Employerregion" name="Employerregion" class="input-text" required
+                            disabled>
                     </div>
                 </div>
 
@@ -288,8 +293,9 @@
                         <input type="date" id="issuedDate" name="issuedDate" class="input-text" disabled>
                     </div>
                     <div>
-                        <label for="expiryDate">Expiry Date</label><br>
-                        <input type="date" id="expiryDate" name="expiryDate" class="input-text" disabled>
+                        <label for="expiryDateInsurance">Expiry Date</label><br>
+                        <input type="date" id="expiryDateInsurance" name="expiryDateInsurance" class="input-text"
+                            disabled>
                     </div>
                     <div>
                         <label for="uploadInsurance">Upload Insurance</label><br>
@@ -304,7 +310,7 @@
                     </div>
                     <div>
                         <label for="dependentContactNo">Dependent Contact No.</label><br>
-                        <input type="tel" class="input-text" disabled>
+                        <input type="tel" id="dependentContactNo" name="dependentContactNo" class="input-text" disabled>
                     </div>
                 </div>
 
