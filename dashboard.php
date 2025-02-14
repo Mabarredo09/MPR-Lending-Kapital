@@ -106,7 +106,8 @@
                     <div>
                         <label for="suffix">Suffix</label><br>
                         <select id="suffix" name="suffix" class="input-text" disabled>
-                            <option value="">Select suffix</option>
+                            <option value="" disabled selected>Select suffix</option>
+                            <option value="None">None</option>
                             <option value="Jr.">Jr.</option>
                             <option value="Sr.">Sr.</option>
                             <option value="II">II</option>
@@ -275,12 +276,24 @@
                             disabled>
                     </div>
                 </div>
+                <!-- 
+                <h1>Is Insured</h1>
+                <div class="input-row">
+                    <div>
+                        <label for="isInsured">Is Insured</label><br>
+                        <select name="isInsured" id="isInsured" class="input-text" disabled>
+                            <option value="Yes">Yes</option>
+                            <option value="No">No</option>
+                        </select>
+                    </div>
+                </div> -->
 
                 <h1>Insurance Details</h1>
                 <div class="input-row">
                     <div>
                         <label for="insuranceType">Type of Insurance</label><br>
                         <select name="insuranceType" id="insuranceType" class="input-text" disabled>
+                            <option value="" disabled selected>Select type of insurance</option>
                             <option value="Health Insurance">Health Insurance</option>
                             <option value="Life Insurance">Life Insurance</option>
                             <option value="Single Premium">Single Premium</option>

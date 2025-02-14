@@ -6,144 +6,184 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = array();
 
     try {
-        // Database connection
-        $db = new mysqli('localhost', 'root', '', 'mprlendingdb');
-
+        $db = new mysqli('localhost', 'root', '', 'lendingdb');
         if ($db->connect_error) {
             throw new Exception('Connection Failed: ' . $db->connect_error);
         }
 
         $db->begin_transaction();
 
-        // Handle file uploads
-        $id_photo = $_POST['existing_id_photo'];
-        $insurance_file = $_POST['existing_insurance_file'];
-        $collateral_files = isset($_POST['existing_collateral_files']) ? $_POST['existing_collateral_files'] : '';
+        // Get borrower's current address_id and employer's address_id
+        $addressSql = "SELECT b.address_id, ed.address_id as employer_address_id 
+                      FROM borrowers b
+                      LEFT JOIN employment_details ed ON b.id = ed.borrower_id
+                      WHERE b.id = ?";
+        $addressStmt = $db->prepare($addressSql);
+        $addressStmt->bind_param("i", $_POST['id']);
+        $addressStmt->execute();
+        $addressResult = $addressStmt->get_result();
+        $addresses = $addressResult->fetch_assoc();
 
-        if (isset($_FILES['idPhoto']) && $_FILES['idPhoto']['error'] === 0) {
-            $id_photo = uploadFile($_FILES['idPhoto'], 'id_photos');
+        // Update borrower's address
+        $addressSql = "UPDATE addresses SET 
+            home_no = ?, street = ?, barangay = ?, city = ?, province = ?, region = ?
+            WHERE id = ?";
+        $addressStmt = $db->prepare($addressSql);
+        $addressStmt->bind_param(
+            "ssssssi",
+            $_POST['homeNo'],
+            $_POST['street'],
+            $_POST['baranggay'],
+            $_POST['city'],
+            $_POST['province'],
+            $_POST['region'],
+            $addresses['address_id']
+        );
+        $addressStmt->execute();
+
+        // Update employer's address
+        $empAddressSql = "UPDATE addresses SET 
+            home_no = ?, street = ?, barangay = ?, city = ?, province = ?, region = ?
+            WHERE id = ?";
+        $empAddressStmt = $db->prepare($empAddressSql);
+        $empAddressStmt->bind_param(
+            "ssssssi",
+            $_POST['EmployerhomeNo'],
+            $_POST['Employerstreet'],
+            $_POST['Employerbaranggay'],
+            $_POST['Employercity'],
+            $_POST['Employerprovince'],
+            $_POST['Employerregion'],
+            $addresses['employer_address_id']
+        );
+        $empAddressStmt->execute();
+
+        // Update borrower's basic information
+        $borrowerSql = "UPDATE borrowers SET 
+            first_name = ?, middle_name = ?, surname = ?, suffix = ?, 
+            sex = ?, dob = ?, marital_status = ?, contact_number = ?
+            WHERE id = ?";
+        $borrowerStmt = $db->prepare($borrowerSql);
+        $borrowerStmt->bind_param(
+            "ssssssssi",
+            $_POST['fName'],
+            $_POST['mName'],
+            $_POST['surname'],
+            $_POST['suffix'],
+            $_POST['sex'],
+            $_POST['DOB'],
+            $_POST['maritalStatus'],
+            $_POST['contactNo'],
+            $_POST['id']
+        );
+        $borrowerStmt->execute();
+
+        // Update employment details
+        $employmentSql = "UPDATE employment_details SET 
+            employer_name = ?, years_with_employer = ?, position = ?, 
+            phone_no = ?, salary = ?
+            WHERE borrower_id = ?";
+
+        $noOfYearsWorked = intval($_POST['noOfYearsWorked']);
+        $employmentStmt = $db->prepare($employmentSql);
+        $employmentStmt->bind_param(
+            "sissdi",
+            $_POST['employerName'],
+            $noOfYearsWorked,
+            $_POST['position'],
+            $_POST['phoneNoEmployer'],
+            $_POST['salary'],
+            $_POST['id']
+        );
+        $employmentStmt->execute();
+
+        // Handle ID document update
+        if (isset($_FILES['idPhoto']) || isset($_POST['idType'])) {
+            $idPhoto = $_POST['existing_id_photo'];
+            if (isset($_FILES['idPhoto']) && $_FILES['idPhoto']['error'] === 0) {
+                $idPhoto = uploadFile($_FILES['idPhoto'], 'id_photos');
+            }
+
+            $idSql = "UPDATE identification_documents SET 
+                id_type = ?, id_no = ?, expiry_date = ?, id_photo_path = ?
+                WHERE borrower_id = ?";
+            $idStmt = $db->prepare($idSql);
+            $idStmt->bind_param(
+                "ssssi",
+                $_POST['idType'],
+                $_POST['idNo'],
+                $_POST['expiryDate'],
+                $idPhoto,
+                $_POST['id']
+            );
+            $idStmt->execute();
         }
 
-        if (isset($_FILES['insurancePhoto']) && $_FILES['insurancePhoto']['error'] === 0) {
-            $insurance_file = uploadFile($_FILES['insurancePhoto'], 'insurance_files');
+        // Handle insurance update
+        if (isset($_FILES['insurancePhoto']) || isset($_POST['insuranceType'])) {
+            $insuranceFile = $_POST['existing_insurance_file'];
+            if (isset($_FILES['insurancePhoto']) && $_FILES['insurancePhoto']['error'] === 0) {
+                $insuranceFile = uploadFile($_FILES['insurancePhoto'], 'insurance_files');
+            }
+
+            $insuranceSql = "UPDATE insurance_details SET 
+                insurance_type = ?, issued_date = ?, expiry_date = ?, insurance_file_path = ?
+                WHERE borrower_id = ?";
+            $insuranceStmt = $db->prepare($insuranceSql);
+            $insuranceStmt->bind_param(
+                "ssssi",
+                $_POST['insuranceType'],
+                $_POST['issuedDate'],
+                $_POST['expiryDateInsurance'],
+                $insuranceFile,
+                $_POST['id']
+            );
+            $insuranceStmt->execute();
         }
 
+        // Update dependent information
+        $dependentSql = "UPDATE dependents SET 
+            name = ?, contact_number_dependents = ?
+            WHERE borrower_id = ?";
+        $dependentStmt = $db->prepare($dependentSql);
+        $dependentStmt->bind_param(
+            "ssi",
+            $_POST['dependentName'],
+            $_POST['dependentContactNo'],
+            $_POST['id']
+        );
+        $dependentStmt->execute();
+
+        // Handle collateral files
         if (isset($_FILES['collateral'])) {
-            $new_collateral_files = array();
+            // Delete existing collateral files
+            $deleteSql = "DELETE FROM collateral_files WHERE borrower_id = ?";
+            $deleteStmt = $db->prepare($deleteSql);
+            $deleteStmt->bind_param("i", $_POST['id']);
+            $deleteStmt->execute();
+
+            // Insert new collateral files
             foreach ($_FILES['collateral']['tmp_name'] as $key => $tmp_name) {
                 if ($_FILES['collateral']['error'][$key] === 0) {
-                    $new_collateral_files[] = uploadFile([
+                    $collateralFile = uploadFile([
                         'name' => $_FILES['collateral']['name'][$key],
                         'type' => $_FILES['collateral']['type'][$key],
                         'tmp_name' => $tmp_name,
                         'error' => $_FILES['collateral']['error'][$key],
                         'size' => $_FILES['collateral']['size'][$key]
                     ], 'collateral_files');
+
+                    $collateralSql = "INSERT INTO collateral_files (borrower_id, file_path) VALUES (?, ?)";
+                    $collateralStmt = $db->prepare($collateralSql);
+                    $collateralStmt->bind_param("is", $_POST['id'], $collateralFile);
+                    $collateralStmt->execute();
                 }
             }
-            if (!empty($new_collateral_files)) {
-                $collateral_files = implode(',', $new_collateral_files);
-            }
         }
 
-        // Store values that need to be passed by reference
-        $fname = $_POST['fName'];
-        $mname = $_POST['mName'];
-        $surname = $_POST['surname'];
-        $suffix = $_POST['suffix'];
-        $sex = $_POST['sex'];
-        $dob = $_POST['DOB'];
-        $marital_status = $_POST['maritalStatus'];
-        $contact_no = $_POST['contactNo'];
-        $home_no = $_POST['homeNo'];
-        $street = $_POST['street'];
-        $baranggay = $_POST['baranggay'];
-        $city = $_POST['city'];
-        $province = $_POST['province'];
-        $region = $_POST['region'];
-        $id_type = $_POST['idType'];
-        $id_no = $_POST['idNo'];
-        $expiry_date = $_POST['expiryDate'];
-        $employer_name = $_POST['employerName'];
-        $years = intval($_POST['noOfYearsWorked']);
-        $position = $_POST['position'];
-        $phone_employer = $_POST['phoneNoEmployer'];
-        $salary = $_POST['salary'];
-        $emp_home = $_POST['EmployerhomeNo'];
-        $emp_street = $_POST['Employerstreet'];
-        $emp_brgy = $_POST['Employerbaranggay'];
-        $emp_city = $_POST['Employercity'];
-        $emp_province = $_POST['Employerprovince'];
-        $emp_region = $_POST['Employerregion'];
-        $insurance_type = $_POST['insuranceType'];
-        $issued_date = $_POST['issuedDate'];
-        $insurance_expiry = $_POST['expiryDateInsurance'];
-        $dependent_name = $_POST['dependentName'];
-        $dependent_contact = $_POST['dependentContactNo'];
-        $user_id = intval($_POST['id']);
-
-        $sql = "UPDATE borrowers SET 
-             first_name = ?, middle_name = ?, surname = ?, suffix = ?, sex = ?,
-             dob = ?, marital_status = ?, contact_number = ?,
-             home_no = ?, street = ?, baranggay = ?, city = ?, province = ?, region = ?,
-             id_type = ?, id_no = ?, expiry_date = ?, id_photo = ?,
-             employer_name = ?, years_with_employer = ?, position = ?, phone_no_employer = ?,
-             salary = ?, employer_home_no = ?, employer_street = ?, employer_baranggay = ?,
-             employer_city = ?, employer_province = ?, employer_region = ?,
-             insurance_type = ?, insurance_issued_date = ?, insurance_expiry_date = ?,
-             insurance_file = ?, dependent_name = ?, dependent_contact_no = ?,
-             collateral_files = ?
-             WHERE id = ?";
-
-        $stmt = $db->prepare($sql);
-        $stmt->bind_param(
-            "sssssssssssssssssssississsssssssssssi",
-            $fname,
-            $mname,
-            $surname,
-            $suffix,
-            $sex,
-            $dob,
-            $marital_status,
-            $contact_no,
-            $home_no,
-            $street,
-            $baranggay,
-            $city,
-            $province,
-            $region,
-            $id_type,
-            $id_no,
-            $expiry_date,
-            $id_photo,
-            $employer_name,
-            $years,
-            $position,
-            $phone_employer,
-            $salary,
-            $emp_home,
-            $emp_street,
-            $emp_brgy,
-            $emp_city,
-            $emp_province,
-            $emp_region,
-            $insurance_type,
-            $issued_date,
-            $insurance_expiry,
-            $insurance_file,
-            $dependent_name,
-            $dependent_contact,
-            $collateral_files,
-            $user_id
-        );
-
-        if ($stmt->execute()) {
-            $db->commit();
-            $response['status'] = 'success';
-            $response['message'] = 'Borrower updated successfully';
-        } else {
-            throw new Exception("Failed to update borrower");
-        }
+        $db->commit();
+        $response['status'] = 'success';
+        $response['message'] = 'Borrower updated successfully';
 
     } catch (Exception $e) {
         if (isset($db)) {
@@ -153,14 +193,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response['message'] = $e->getMessage();
     }
 
-    if (isset($stmt)) {
-        $stmt->close();
-    }
     if (isset($db)) {
         $db->close();
     }
 
     echo json_encode($response);
+    exit();
 }
 
 function uploadFile($file, $directory)

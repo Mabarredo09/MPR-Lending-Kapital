@@ -94,3 +94,17 @@ input[type="email"] {
 
     text-align: center;
 }
+
+/* CSS for Mobile Responsiveness */
+@media screen and (max-width: 417px) {
+    .login-container {
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border: 1px solid black;
+        margin: 8rem auto;
+        width: 856px;
+        height: 606px;
+        border-radius: 50px;
+    }
+}

@@ -37,7 +37,6 @@
 
                 <div class="signup-container">
                     <p>Don't have an account? <a href="signup.php">Signup!</a></p>
-                    <p>sample</p>
                 </div>
         </div>
         </form>

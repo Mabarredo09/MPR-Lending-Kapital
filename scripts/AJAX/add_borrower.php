@@ -6,143 +6,155 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $response = array();
 
     try {
-        // Database connection
-        $db = new mysqli('localhost', 'root', '', 'mprlendingdb');
-
+        $db = new mysqli('localhost', 'root', '', 'lendingdb');
         if ($db->connect_error) {
             throw new Exception('Connection Failed: ' . $db->connect_error);
         }
 
         $db->begin_transaction();
 
-        // Handle file uploads
-        $id_photo = '';
-        $insurance_file = '';
-        $collateral_files = array();
+        // 1. Insert address
+        $addressSql = "INSERT INTO addresses (home_no, street, barangay, city, province, region) 
+                      VALUES (?, ?, ?, ?, ?, ?)";
+        $addressStmt = $db->prepare($addressSql);
+        $addressStmt->bind_param(
+            "ssssss",
+            $_POST['homeNo'],
+            $_POST['street'],
+            $_POST['baranggay'],
+            $_POST['city'],
+            $_POST['province'],
+            $_POST['region']
+        );
+        $addressStmt->execute();
+        $addressId = $db->insert_id;
 
-        if (isset($_FILES['idPhoto']) && $_FILES['idPhoto']['error'] === 0) {
-            $id_photo = uploadFile($_FILES['idPhoto'], 'id_photos');
+        // 2. Insert borrower
+        $borrowerSql = "INSERT INTO borrowers (first_name, middle_name, surname, suffix, sex, 
+                        dob, marital_status, contact_number, address_id, loan_balance) 
+                        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 0)";
+        $borrowerStmt = $db->prepare($borrowerSql);
+        $borrowerStmt->bind_param(
+            "ssssssssi",
+            $_POST['fName'],
+            $_POST['mName'],
+            $_POST['surname'],
+            $_POST['suffix'],
+            $_POST['sex'],
+            $_POST['DOB'],
+            $_POST['maritalStatus'],
+            $_POST['contactNo'],
+            $addressId
+        );
+        $borrowerStmt->execute();
+        $borrowerId = $db->insert_id;
+
+        // 3. Insert employer address
+        $empAddressSql = "INSERT INTO addresses (home_no, street, barangay, city, province, region) 
+                         VALUES (?, ?, ?, ?, ?, ?)";
+        $empAddressStmt = $db->prepare($empAddressSql);
+        $empAddressStmt->bind_param(
+            "ssssss",
+            $_POST['EmployerhomeNo'],
+            $_POST['Employerstreet'],
+            $_POST['Employerbaranggay'],
+            $_POST['Employercity'],
+            $_POST['Employerprovince'],
+            $_POST['Employerregion']
+        );
+        $empAddressStmt->execute();
+        $empAddressId = $db->insert_id;
+
+        $noOfYearsWorked = intval($_POST['noOfYearsWorked']);
+        // 4. Insert employment details
+        $employmentSql = "INSERT INTO employment_details (borrower_id, employer_name, years_with_employer, 
+                         position, phone_no, salary, address_id) 
+                         VALUES (?, ?, ?, ?, ?, ?, ?)";
+        $employmentStmt = $db->prepare($employmentSql);
+        $employmentStmt->bind_param(
+            "isissis",
+            $borrowerId,
+            $_POST['employerName'],
+            $noOfYearsWorked,
+            $_POST['position'],
+            $_POST['phoneNoEmployer'],
+            $_POST['salary'],
+            $empAddressId
+        );
+        $employmentStmt->execute();
+
+        // 5. Insert identification document
+        if (isset($_FILES['idPhoto'])) {
+            $idPhoto = uploadFile($_FILES['idPhoto'], 'id_photos');
+            $idSql = "INSERT INTO identification_documents (borrower_id, id_type, id_no, 
+                      expiry_date, id_photo_path) VALUES (?, ?, ?, ?, ?)";
+            $idStmt = $db->prepare($idSql);
+            $idStmt->bind_param(
+                "issss",
+                $borrowerId,
+                $_POST['idType'],
+                $_POST['idNo'],
+                $_POST['expiryDate'],
+                $idPhoto
+            );
+            $idStmt->execute();
         }
 
-        if (isset($_FILES['insurancePhoto']) && $_FILES['insurancePhoto']['error'] === 0) {
-            $insurance_file = uploadFile($_FILES['insurancePhoto'], 'insurance_files');
+        // 6. Insert insurance details
+        if (isset($_FILES['insurancePhoto'])) {
+            $insuranceFile = uploadFile($_FILES['insurancePhoto'], 'insurance_files');
+            $insuranceSql = "INSERT INTO insurance_details (borrower_id, insurance_type, 
+                            issued_date, expiry_date, insurance_file_path) 
+                            VALUES (?, ?, ?, ?, ?)";
+            $insuranceStmt = $db->prepare($insuranceSql);
+            $insuranceStmt->bind_param(
+                "issss",
+                $borrowerId,
+                $_POST['insuranceType'],
+                $_POST['issuedDate'],
+                $_POST['expiryDateInsurance'],
+                $insuranceFile
+            );
+            $insuranceStmt->execute();
         }
 
+        // 7. Insert dependent
+        $dependentSql = "INSERT INTO dependents (borrower_id, name, contact_number_dependents) 
+                        VALUES (?, ?, ?)";
+        $dependentStmt = $db->prepare($dependentSql);
+        $dependentStmt->bind_param(
+            "iss",
+            $borrowerId,
+            $_POST['dependentName'],
+            $_POST['dependentContactNo']
+        );
+        $dependentStmt->execute();
+
+        // 8. Insert collateral files
         if (isset($_FILES['collateral'])) {
             foreach ($_FILES['collateral']['tmp_name'] as $key => $tmp_name) {
                 if ($_FILES['collateral']['error'][$key] === 0) {
-                    $collateral_files[] = uploadFile([
+                    $collateralFile = uploadFile([
                         'name' => $_FILES['collateral']['name'][$key],
                         'type' => $_FILES['collateral']['type'][$key],
                         'tmp_name' => $tmp_name,
                         'error' => $_FILES['collateral']['error'][$key],
                         'size' => $_FILES['collateral']['size'][$key]
                     ], 'collateral_files');
+
+                    $collateralSql = "INSERT INTO collateral_files (borrower_id, file_path) 
+                                    VALUES (?, ?)";
+                    $collateralStmt = $db->prepare($collateralSql);
+                    $collateralStmt->bind_param("is", $borrowerId, $collateralFile);
+                    $collateralStmt->execute();
                 }
             }
         }
 
-        // Convert array to string for collateral_files
-        $collateral_files_str = implode(',', $collateral_files);
-
-        // Convert values that need to be passed by reference
-        $fname = $_POST['fName'];
-        $mname = $_POST['mName'];
-        $surname = $_POST['surname'];
-        $suffix = $_POST['suffix'];
-        $sex = $_POST['sex'];
-        $dob = $_POST['DOB'];
-        $marital_status = $_POST['maritalStatus'];
-        $contact_no = $_POST['contactNo'];
-        $home_no = $_POST['homeNo'];
-        $street = $_POST['street'];
-        $baranggay = $_POST['baranggay'];
-        $city = $_POST['city'];
-        $province = $_POST['province'];
-        $region = $_POST['region'];
-        $id_type = $_POST['idType'];
-        $id_no = $_POST['idNo'];
-        $expiry_date = $_POST['expiryDate'];
-        $employer_name = $_POST['employerName'];
-        $years = intval($_POST['noOfYearsWorked']);
-        $position = $_POST['position'];
-        $phone_employer = $_POST['phoneNoEmployer'];
-        $salary = $_POST['salary'];
-        $emp_home = $_POST['EmployerhomeNo'];
-        $emp_street = $_POST['Employerstreet'];
-        $emp_brgy = $_POST['Employerbaranggay'];
-        $emp_city = $_POST['Employercity'];
-        $emp_province = $_POST['Employerprovince'];
-        $emp_region = $_POST['Employerregion'];
-        $insurance_type = $_POST['insuranceType'];
-        $issued_date = $_POST['issuedDate'];
-        $insurance_expiry = $_POST['expiryDateInsurance'];
-        $dependent_name = $_POST['dependentName'];
-        $dependent_contact = $_POST['dependentContactNo'];
-        $collateral_str = implode(',', $collateral_files);
-
-        $sql = "INSERT INTO borrowers (
-           first_name, middle_name, surname, suffix, sex, 
-           dob, marital_status, contact_number,
-           home_no, street, baranggay, city, province, region,
-           id_type, id_no, expiry_date, id_photo,
-           employer_name, years_with_employer, position, phone_no_employer,
-           salary, employer_home_no, employer_street, employer_baranggay,
-           employer_city, employer_province, employer_region,
-           insurance_type, insurance_issued_date, insurance_expiry_date,
-           insurance_file, dependent_name, dependent_contact_no,
-           collateral_files
-       ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 
-                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-
-        $stmt = $db->prepare($sql);
-        $stmt->bind_param(
-            "sssssssssssssssssssissssssssssssssss",
-            $fname,
-            $mname,
-            $surname,
-            $suffix,
-            $sex,
-            $dob,
-            $marital_status,
-            $contact_no,
-            $home_no,
-            $street,
-            $baranggay,
-            $city,
-            $province,
-            $region,
-            $id_type,
-            $id_no,
-            $expiry_date,
-            $id_photo,
-            $employer_name,
-            $years,
-            $position,
-            $phone_employer,
-            $salary,
-            $emp_home,
-            $emp_street,
-            $emp_brgy,
-            $emp_city,
-            $emp_province,
-            $emp_region,
-            $insurance_type,
-            $issued_date,
-            $insurance_expiry,
-            $insurance_file,
-            $dependent_name,
-            $dependent_contact,
-            $collateral_str
-        );
-
-        if ($stmt->execute()) {
-            $db->commit();
-            $response['status'] = 'success';
-            $response['message'] = 'Borrower added successfully';
-        } else {
-            throw new Exception("Failed to add borrower");
-        }
+        $db->commit();
+        $response['status'] = 'success';
+        $response['message'] = 'Borrower added successfully';
+        $response['borrower_id'] = $borrowerId;
 
     } catch (Exception $e) {
         if (isset($db)) {
@@ -152,14 +164,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $response['message'] = $e->getMessage();
     }
 
-    if (isset($stmt)) {
-        $stmt->close();
-    }
     if (isset($db)) {
         $db->close();
     }
 
     echo json_encode($response);
+    exit();
 }
 
 function uploadFile($file, $directory)

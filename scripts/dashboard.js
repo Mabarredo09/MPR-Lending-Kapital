@@ -1,4 +1,7 @@
 document.addEventListener("DOMContentLoaded", function () {
+  // Scroll to top of page
+  window.scrollTo({ top: 0, behavior: "smooth" });
+
   const addbtn = document.getElementById("add-btn");
   let editbtn = document.getElementById("edit-btn");
   let deletebtn = document.getElementById("delete-btn");
@@ -119,14 +122,30 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((response) => response.json())
           .then((data) => {
             if (data.status === "success") {
-              Swal.fire(
-                "Added!",
-                "Borrower has been added successfully.",
-                "success",
-                3000
-              ).then(() => {
+              Swal.fire({
+                title: "Added!",
+                text: "Borrower has been added successfully.",
+                icon: "success",
+                timer: 3000,
+                didClose: () => {
+                  // Scroll after the alert is closed
+                  window.requestAnimationFrame(() => {
+                    window.scrollTo({
+                      top: 0,
+                      behavior: "smooth",
+                      duration: 2000,
+                    });
+                  });
+                },
+              }).then(() => {
                 // Reset form
                 borrowerForm.reset();
+
+                // Scroll to top of page
+                window.scrollTo({ top: 0, behavior: "smooth" });
+                if (window.scrollY != 0) {
+                  window.scrollTo({ top: 0 });
+                }
 
                 // Clear previews
                 document.getElementById("idPhotoPreview").innerHTML = "";
@@ -146,6 +165,8 @@ document.addEventListener("DOMContentLoaded", function () {
                 confirmBtn.style.display = "none";
 
                 exit();
+                // Scroll to top of page
+                window.scrollTo({ top: 0, behavior: "smooth" });
               });
             } else {
               console.error("Error:", data.message);
@@ -455,7 +476,7 @@ document.addEventListener("DOMContentLoaded", function () {
     // Populate address
     document.getElementById("homeNo").value = user.home_no;
     document.getElementById("street").value = user.street;
-    document.getElementById("baranggay").value = user.baranggay;
+    document.getElementById("baranggay").value = user.barangay;
     document.getElementById("city").value = user.city;
     document.getElementById("province").value = user.province;
     document.getElementById("region").value = user.region;
@@ -464,9 +485,9 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("idType").value = user.id_type || "";
     document.getElementById("idNo").value = user.id_no;
     document.getElementById("expiryDate").value = user.expiry_date;
-    if (user.id_photo) {
+    if (user.id_photo_path) {
       const idPhotoPreview = document.getElementById("idPhotoPreview");
-      idPhotoPreview.innerHTML = `<img src="images/uploads/${user.id_photo}" style="max-width: 200px; margin: 10px;" class="zoomable">`;
+      idPhotoPreview.innerHTML = `<img src="images/uploads/${user.id_photo_path}" style="max-width: 200px; margin: 10px;" class="zoomable">`;
       const zoomable = idPhotoPreview.querySelector(".zoomable");
       if (zoomable) {
         zooming.listen(zoomable);
@@ -477,14 +498,13 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("employerName").value = user.employer_name;
     document.getElementById("noOfYearsWorked").value = user.years_with_employer;
     document.getElementById("position").value = user.position;
-    document.getElementById("phoneNoEmployer").value = user.phone_no_employer;
+    document.getElementById("phoneNoEmployer").value = user.employer_phone;
     document.getElementById("salary").value = user.salary;
 
     // Populate Employer Address
     document.getElementById("EmployerhomeNo").value = user.employer_home_no;
     document.getElementById("Employerstreet").value = user.employer_street;
-    document.getElementById("Employerbaranggay").value =
-      user.employer_baranggay;
+    document.getElementById("Employerbaranggay").value = user.employer_barangay;
     document.getElementById("Employercity").value = user.employer_city;
     document.getElementById("Employerprovince").value = user.employer_province;
     document.getElementById("Employerregion").value = user.employer_region;
@@ -494,11 +514,11 @@ document.addEventListener("DOMContentLoaded", function () {
     document.getElementById("issuedDate").value = user.issued_date;
     document.getElementById("expiryDateInsurance").value =
       user.insurance_expiry_date;
-    if (user.insurance_file) {
+    if (user.insurance_file_path) {
       const insurancePhotoPreview = document.getElementById(
         "insurancePhotoPreview"
       );
-      insurancePhotoPreview.innerHTML = `<img src="images/uploads/${user.insurance_file}" style="max-width: 200px; margin: 10px;" class="zoomable">`;
+      insurancePhotoPreview.innerHTML = `<img src="images/uploads/${user.insurance_file_path}" style="max-width: 200px; margin: 10px;" class="zoomable">`;
       const zoomable = insurancePhotoPreview.querySelector(".zoomable");
       if (zoomable) {
         zooming.listen(zoomable);
@@ -506,7 +526,7 @@ document.addEventListener("DOMContentLoaded", function () {
     }
     document.getElementById("dependentName").value = user.dependent_name;
     document.getElementById("dependentContactNo").value =
-      user.dependent_contact_no;
+      user.dependent_contact;
 
     // Populate Collateral Details
 
@@ -562,17 +582,18 @@ document.addEventListener("DOMContentLoaded", function () {
       salary: user.salary,
       employer_home_no: user.employer_home_no,
       employer_street: user.employer_street,
-      employer_baranggay: user.employer_baranggay,
+      employer_baranggay: user.employer_barangay,
       employer_city: user.employer_city,
       employer_province: user.employer_province,
       employer_region: user.employer_region,
       insurance_type: user.insurance_type || "",
+      issued_date: user.issued_date,
       insurance_expiry_date: user.insurance_expiry_date,
       dependent_name: user.dependent_name,
       dependent_contact_no: user.dependent_contact_no,
       collateral_files: user.collateral_files,
-      id_photo: user.id_photo,
-      insurance_file: user.insurance_file,
+      id_photo: user.id_photo_path,
+      insurance_file: user.insurance_file_path,
     };
     // Remove any existing event listeners from the edit button
     editbtn.removeEventListener("click", handleEditClick);
@@ -747,13 +768,28 @@ document.addEventListener("DOMContentLoaded", function () {
                 title: "Updated!",
                 text: "Borrower information has been updated successfully.",
                 timer: 3000,
+                willClose: () => {
+                  window.scrollTo({
+                    top: 0,
+                  });
+                },
+                didClose: () => {
+                  // Scroll after the alert is closed
+                  window.requestAnimationFrame(() => {
+                    window.scrollTo({
+                      top: 0,
+                      behavior: "smooth",
+                      duration: 2000,
+                    });
+                  });
+                },
               }).then(() => {
                 // Update originalValues with new data
                 if (idPhotoInput.files[0]) {
-                  originalValues.id_photo = data.id_photo;
+                  originalValues.id_photo_path = data.id_photo_path;
                 }
                 if (insurancePhotoInput.files[0]) {
-                  originalValues.insurance_file = data.insurance_file;
+                  originalValues.insurance_file_path = data.insurance_file_path;
                 }
                 if (collateralInput.files.length > 0) {
                   originalValues.collateral_files = data.collateral_files;
@@ -818,7 +854,6 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Add delete button functionality
   deletebtn.addEventListener("click", function () {
-    console.log(originalValues.id);
     Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
@@ -828,7 +863,6 @@ document.addEventListener("DOMContentLoaded", function () {
       cancelButtonColor: "#3085d6",
       confirmButtonText: "Yes, delete it!",
     }).then((result) => {
-      console.log(result);
       if (result.isConfirmed) {
         // Get the selected user's ID from the originalValues
         const userId = originalValues.id;
@@ -844,34 +878,36 @@ document.addEventListener("DOMContentLoaded", function () {
           .then((response) => response.json())
           .then((data) => {
             if (data.status === "success") {
-              Swal.fire("Deleted!", "User has been deleted.", "success").then(
-                () => {
-                  // Clear form
-                  const form = document.querySelector("form");
-                  form.reset();
+              Swal.fire(
+                "Deleted!",
+                "User has been deleted.",
+                "success",
+                3000
+              ).then(() => {
+                // Clear form
+                const form = document.querySelector("form");
+                form.reset();
 
-                  // Clear previews
-                  document.getElementById("idPhotoPreview").innerHTML = "";
-                  document.getElementById("insurancePhotoPreview").innerHTML =
-                    "";
-                  document.getElementById("collateral-preview").innerHTML = "";
+                // Clear previews
+                document.getElementById("idPhotoPreview").innerHTML = "";
+                document.getElementById("insurancePhotoPreview").innerHTML = "";
+                document.getElementById("collateral-preview").innerHTML = "";
 
-                  // Disable buttons
-                  editbtn.disabled = true;
-                  deletebtn.disabled = true;
-                  deletebtn.style = "background-color: #ccc; color: #fff;";
-                  editbtn.style = "background-color: #ccc; color: #fff;";
+                // Disable buttons
+                editbtn.disabled = true;
+                deletebtn.disabled = true;
+                deletebtn.style = "background-color: #ccc; color: #fff;";
+                editbtn.style = "background-color: #ccc; color: #fff;";
 
-                  // Clear search input
-                  document.querySelector(".search-input").value = "";
+                // Clear search input
+                document.querySelector(".search-input").value = "";
 
-                  // Disable all inputs
-                  const inputs = document.querySelectorAll(
-                    ".input-text, .input-radio, .img-input, select"
-                  );
-                  inputs.forEach((input) => (input.disabled = true));
-                }
-              );
+                // Disable all inputs
+                const inputs = document.querySelectorAll(
+                  ".input-text, .input-radio, .img-input, select"
+                );
+                inputs.forEach((input) => (input.disabled = true));
+              });
             } else {
               Swal.fire("Error!", "Failed to delete user.", "error");
             }
