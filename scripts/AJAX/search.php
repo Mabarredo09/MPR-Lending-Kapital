@@ -70,11 +70,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 $row['issued_date'] = date('Y-m-d', strtotime($row['issued_date']));
             }
 
-            // Format numbers
-            $row['loan_balance'] = number_format((float) $row['loan_balance'], 2, '.', '');
-            if ($row['salary']) {
-                $row['salary'] = number_format((float) $row['salary'], 2, '.', '');
-            }
+            // // Format numbers
+            // $row['loan_balance'] = number_format((float) $row['loan_balance'], 2, '.', '');
+            // if ($row['salary']) {
+            //     $row['salary'] = number_format((float) $row['salary'], 2, '.', '');
+            // }
 
             $borrowers[] = $row;
         }

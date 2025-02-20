@@ -361,7 +361,7 @@ option {
 
 
 .table-container {
-    /* display:none; */
+    display: none;
     background-color: white;
     border-radius: 20px;
     padding: 50px;

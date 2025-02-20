@@ -21,6 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const notificationIcon = document.querySelector(".notification-icon");
   const notificationDropdown = document.querySelector(".notification-dropdown");
 
+  let transaction_table = document.querySelector(".table-container");
   const borrowerForm = document.querySelector(".form-container form");
 
   const zooming = new Zooming();
@@ -346,47 +347,91 @@ document.addEventListener("DOMContentLoaded", function () {
 
   // Form validation
   const loanForm = document.querySelector("#loanModal form");
+  // Update the loan form submission handler
   loanForm.addEventListener("submit", function (event) {
     event.preventDefault();
     const value = parseFloat(interestRate.value);
+
     if (value < 0 || value > 100) {
-      event.preventDefault();
       Swal.fire({
         icon: "error",
         title: "Invalid Interest Rate",
         text: "Interest rate must be between 0% and 100%",
       });
-    } else {
-      Swal.fire({
-        icon: "warning",
-        title: "Are you sure you want to add this loan?",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, add it!",
-      }).then((result) => {
-        if (result.isConfirmed) {
+      return;
+    }
+    console.log(originalValues);
+    Swal.fire({
+      icon: "warning",
+      title: "Are you sure you want to add this loan?",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, add it!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const formData = new FormData(loanForm);
+
+        // Add borrower ID from the search/selection
+        if (originalValues && originalValues.id) {
+          formData.append("borrowerId", originalValues.id);
+        } else {
           Swal.fire({
-            icon: "success",
-            title: "Success!",
-            text: "Loan has been successfully added.",
-          }).then(() => {
-            // Submit the form programmatically
-            const formData = new FormData(loanForm);
-            fetch(loanForm.action, {
-              method: "POST",
-              body: formData,
-            }).then(() => {
-              // Clear form and close modal after successful submission
-              loanForm.reset();
-              document.getElementById("loanModal").style.display = "none";
-              // Reload the table to reflect the new data
-              location.reload();
+            icon: "error",
+            title: "Error!",
+            text: "Please select a borrower first.",
+          });
+          return;
+        }
+
+        // Add promissory note if exists
+        const promissoryNote = document.getElementById("promissoryNote");
+        if (promissoryNote && promissoryNote.files[0]) {
+          formData.append("promissoryNote", promissoryNote.files[0]);
+        }
+
+        fetch("scripts/AJAX/add_loan.php", {
+          method: "POST",
+          body: formData,
+        })
+          .then((response) => {
+            if (!response.ok) throw new Error("Network response was not ok");
+            return response.json();
+          })
+          .then((data) => {
+            if (data.status === "success") {
+              Swal.fire({
+                icon: "success",
+                title: "Success!",
+                text: "Loan has been successfully added.",
+                timer: 3000,
+              }).then(() => {
+                // Clear form and close modal
+                loanForm.reset();
+                document.getElementById("loanModal").style.display = "none";
+
+                // Reset interest rate field
+                interestRate.value = "";
+                interestRate.disabled = true;
+
+                // Reload table data without refreshing page
+                // You'll need to implement this function
+                updateTableData();
+              });
+            } else {
+              throw new Error(data.message || "Failed to add loan");
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+            Swal.fire({
+              icon: "error",
+              title: "Error!",
+              text: "An error occurred while adding the loan.",
             });
           });
-        }
-      });
-    }
+      }
+    });
   });
 
   // Set default date value to today
@@ -440,6 +485,7 @@ document.addEventListener("DOMContentLoaded", function () {
               deletebtn.disabled = false;
               deletebtn.style = "color: white; background-color:red;";
               searchResults.style.display = "none";
+              transaction_table.style.display = "block";
               searchInput.value = `${user.first_name} ${user.middle_name} ${user.surname}`;
             });
             dropdown.appendChild(resultItem);

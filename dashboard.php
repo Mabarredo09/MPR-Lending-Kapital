@@ -57,6 +57,7 @@
                             <div class="profile-dropdown-content">
                                 <a href="#">Profile</a>
                                 <a href="#">Manage User Access</a>
+                                <a href="#">Borrower List</a>
                                 <a href="#">Audit Logs</a>
                                 <a href="#">Logout</a>
                             </div>
@@ -353,6 +354,17 @@
             <h2>Add New Payment</h2>
             <form action="">
                 <div>
+                    <label for="paymentType">Type of Payment</label><br>
+                    <select name="paymentType" id="paymentType" class="input-text-modal" required>
+                        <option value="" disabled selected>Select type of payment</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Cheque">Cheque</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Bank Transfer">Bank Transfer</option>
+                        <option value="Other">Other</option>
+                    </select>
+                </div>
+                <div>
                     <label for="paymentDate">Payment Date</label><br>
                     <input type="date" id="paymentDate" name="paymentDate" class="input-text-modal" required>
                 </div>
@@ -375,7 +387,7 @@
         <div class="modal-content">
             <span class="close-modal" data-modal="loanModal">&times;</span>
             <h2>Add New Loan</h2>
-            <form action="#" method="post">
+            <form action="#" method="post" enctype="multipart/form-data">
                 <div>
                     <label for="customerType">Type of Customer</label><br>
                     <select name="customerType" id="customerType" class="input-text-modal" required>
@@ -396,9 +408,14 @@
                     <input type="date" id="loanDate" name="loanDate" class="input-text-modal" required>
                 </div>
                 <div>
+                    <label for="term">Term in Months</label><br>
+                    <input type="number" id="term" name="term" class="input-text-modal" required>
+                </div>
+                <div>
                     <label for="loanAmount">Loan Amount</label><br>
                     <input type="number" id="loanAmount" name="loanAmount" class="input-text-modal" required>
                 </div>
+
                 <div class="button-container">
                     <input type="submit" value="Add Loan" class="">
                 </div>
@@ -449,14 +466,16 @@
         <table>
             <tr>
                 <th>Transaction Date</th>
-                <th>Due Date</th>
                 <th>Reference #</th>
                 <th>Type</th>
+                <th>Due Date</th>
                 <th>Amount</th>
                 <th>Interest Rate</th>
+                <th>Term</th>
                 <th>Promisory Note</th>
                 <th>Remarks</th>
                 <th>Balance</th>
+                <th>Action</th>
 
             </tr>
             <tr>
@@ -466,9 +485,11 @@
                 <td>Loan</td>
                 <td>20,000</td>
                 <td>7%</td>
+                <td>30 months</td>
                 <td><button>View</button></td>
                 <td><button>View</button></td>
                 <td>10,000</td>
+                <td><button>Pay</button></td>
             </tr>
         </table>
     </div>
